@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run JavaFX App",
+            "request": "launch",
+            "mainClass": "com.example.App",  // Cambia por tu clase principal con package
+            "projectName": "demo",           // Cambia por el nombre de tu proyecto
+            "vmArgs": "--module-path C:/Users/ESTEBAN3/Downloads/javafx-sdk-25/lib --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Run Current JavaFX File",
+            "request": "launch",
+            "mainClass": "${file}",
+            "vmArgs": "--module-path C:/Users/ESTEBAN3/Downloads/javafx-sdk-25/lib --add-modules javafx.controls,javafx.fxml"
+        }
+    ]
+}

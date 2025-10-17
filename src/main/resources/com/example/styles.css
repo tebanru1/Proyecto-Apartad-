@@ -1,0 +1,62 @@
+
+.root{
+    -fx-background-color:#E6F0FA;
+}
+
+.panel_lateral{
+    -fx-background-color: #002C6E;
+}
+.Ingreso:hover{
+    -fx-background-color: #E6F0FA;
+    -fx-border-color: #E6F0FA;
+}
+
+.visorcodigo{
+    -fx-background-color:white;
+    -fx-border-color:white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 20, 0.1, 5, 5);
+}
+.Ingreso{
+    -fx-background-color:white;
+    -fx-border-color:white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 20, 0.1, 5, 5);
+    -fx-border-width: 2px 2px 2px 2px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-style: solid;
+}
+.btn_salida{
+    -fx-background-color:red;
+    -fx-border-color:red;
+    -fx-border-width: 2px 2px 2px 2px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-style: solid;
+}
+.btn_salida:hover{
+    -fx-background-color:rgb(241, 144, 144);
+}
+.btn_Ingreso{
+    -fx-background-color:green;
+    -fx-border-color:green;
+    -fx-border-width: 2px 2px 2px 2px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-style: solid;
+}
+.btn_Ingreso:hover{
+-fx-background-color:#48ee61;
+
+}
+.btn_Menu{
+    -fx-background-color:#002C6E;
+    -fx-border-color:#002C6E;
+    -fx-border-width: 2px 2px 2px 2px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-style: solid;
+}
+.btn_Menu:hover{
+    -fx-background-color: #004A99; 
+    -fx-border-color: #004A99;
+}
