@@ -1,6 +1,6 @@
 package com.example.Controlador;
 
-
+import com.example.DAO.VisitanteDAO;
 import com.example.Modelo.Visitantes;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,18 +9,23 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;  
+import javafx.scene.control.cell.PropertyValueFactory; 
+import javafx.scene.control.TableCell;
+import javafx.util.Callback;
+import java.text.DecimalFormat; 
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import javax.swing.JLabel;
 
 
 
@@ -40,9 +45,15 @@ public class VisitanteController implements Initializable {
     @FXML
     private Button btnSalir;
     @FXML
+    private TextField buscar;
+    @FXML
+    private Label VIngresada;
+    @FXML
+    private Label VSalir;
+    @FXML
     private TableView<Visitantes> tablaVisitantes;
     @FXML
-    private TableColumn<Visitantes, Integer> columnaCedula;
+    private TableColumn<Visitantes, Long> columnaCedula;
     @FXML
     private TableColumn<Visitantes, String> columnaNombre;
     @FXML
@@ -57,30 +68,49 @@ public class VisitanteController implements Initializable {
     private TableColumn<Visitantes, Time> Hora_ingreso;
     @FXML
     private TableColumn<Visitantes, Time> Hora_salida;
-
-    private Conexion conexion;
     private ObservableList<Visitantes> listaVisitantes;
-    private PreparedStatement pstmt;
-    private Connection con;
-    private java.sql.ResultSet rs;
+    private VisitanteDAO visitanteDAO;
+    VisitanteDAO dao = new VisitanteDAO();
+    
 
     @Override
 public void initialize(URL location, ResourceBundle resources) {
     try {
-        conexion = new Conexion();
-        
+        visitanteDAO = new VisitanteDAO(); // inicializar DAO
         configurarEventos();
         configurarTablaVisitantes();
         ConfigurarComboBox();
         configurarEventoTabla();
         cargarVisitantesDesdeBaseDeDatos();
         ConfigurarTextField();
+        actualizarVisitasHoy();
+        VisitantePorSalir();
        
     } catch (Exception e) {
       
     }
 }
-   private void configurarTablaVisitantes() {
+
+
+private void configurarTablaVisitantes() {
+    DecimalFormat df = new DecimalFormat("#,###");
+
+    columnaCedula.setCellFactory(new Callback<TableColumn<Visitantes, Long>, TableCell<Visitantes, Long>>() {
+        @Override
+        public TableCell<Visitantes, Long> call(TableColumn<Visitantes, Long> param) {
+            return new TableCell<Visitantes, Long>() {
+                @Override
+                protected void updateItem(Long item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(df.format(item).replace(',', '.'));
+                    }
+                }
+            };
+        }
+});
     columnaCedula.setCellValueFactory(new PropertyValueFactory<>("cedula"));
     columnaNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
     columnaApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
@@ -94,9 +124,13 @@ public void initialize(URL location, ResourceBundle resources) {
     tablaVisitantes.setItems(listaVisitantes);
 }
 
+
 public void configurarEventos() {
     btnIngresar.setOnAction(event -> ingresarVisitante());
     btnSalir.setOnAction(event -> registrarSalidaVisitante());
+   buscar.textProperty().addListener((observable, oldValue, newValue) -> {
+        BuscarVisita(newValue);
+    });
 }
 
 public void ConfigurarComboBox() {
@@ -139,7 +173,7 @@ public void ingresarVisitante() {
             return;
         }
 
-        int cedula = Integer.parseInt(cedulaTexto);
+        long cedula = Long.parseLong(cedulaTexto);
         String nombre = txtnombre.getText().toUpperCase();
         String apellido = txtapellido.getText().toUpperCase();
         String area = AREA.getValue().toString();
@@ -150,41 +184,63 @@ public void ingresarVisitante() {
 
         Visitantes visitante = new Visitantes(cedula, nombre, apellido, area, rol, fecha, horaIngreso, horaSalida, null);
         
-        GuardarVisitante(visitante);     // Guardar en base de datos
-        listaVisitantes.add(visitante);  // Agregar a la lista observable
-
+        // Guardar usando DAO
+        visitanteDAO.GuardarVisitante(visitante);
+        listaVisitantes.add(visitante);
+        VisitantePorSalir();
+        actualizarVisitasHoy();
         mostrarMensaje("Visitante ingresado correctamente.");
         limpiarCampos();
+        
 
-    } catch (NumberFormatException e) {
-        mostrarMensaje("La cédula debe ser un número válido.");
     } catch (Exception e) {
-        System.out.println("Error al ingresar visitante: " + e.toString());
         mostrarMensaje("Error al ingresar visitante: " + e.getMessage());
     }
 }
 
 public void registrarSalidaVisitante() {
     try {
-        int cedula = Integer.parseInt(txtcedula.getText());
-        Time horaSalida = Time.valueOf(LocalTime.now());
-        for (Visitantes visitante : listaVisitantes) {
-            if (visitante.getCedula() == cedula) {
-                if (visitante.getHoraSalida() == null) {
-                    visitante.setHoraSalida(horaSalida);
-                    SalidaVisitante(visitante);
-                    tablaVisitantes.refresh();
-                } else {
-                    mostrarMensaje("Ya se ha registrado la salida para este visitante.");
-                }
-                break;
-            }
+        // Obtener la cédula del TextField
+        String cedulaTexto = txtcedula.getText().trim();
+        if (cedulaTexto.isEmpty()) {
+            mostrarMensaje("Debe seleccionar o ingresar la cédula del visitante.");
+            return;
+        }
+
+        long cedula = Long.parseLong(cedulaTexto);
+        Time horaSalida = Time.valueOf(java.time.LocalTime.now());
+
+        // Buscar la última entrada sin salida del visitante
+        Visitantes ultimaEntradaPendiente = listaVisitantes.stream()
+                .filter(v -> v.getCedula() == cedula && v.getHoraSalida() == null)
+                .max((v1, v2) -> {
+                    int fechaCompare = v1.getFecha().compareTo(v2.getFecha());
+                    if (fechaCompare != 0) {
+                        return fechaCompare;
+                    } else {
+                        return v1.getHoraIngreso().compareTo(v2.getHoraIngreso());
+                    }
+                })
+                .orElse(null);
+
+        if (ultimaEntradaPendiente == null) {
+            mostrarMensaje("Ya se ha registrado la salida.");
+        } else {
+            ultimaEntradaPendiente.setHoraSalida(horaSalida);
+            visitanteDAO.SalidaVisitanteDB(ultimaEntradaPendiente);
+            tablaVisitantes.refresh();
+            VisitantePorSalir();
+            mostrarMensaje("Salida registrada correctamente.");
         }
         limpiarCampos();
+
+    } catch (NumberFormatException e) {
+        mostrarMensaje("Cédula inválida. Debe ser un número.");
     } catch (Exception e) {
         System.out.println("Error al registrar salida: " + e.toString());
     }
 }
+
 private void limpiarCampos() {
     txtcedula.clear();
     txtnombre.clear();
@@ -192,51 +248,14 @@ private void limpiarCampos() {
     AREA.setValue(null);
     ROL.setValue(null);
 }
-private void GuardarVisitante(Visitantes visitante) {
-    String sql = "INSERT INTO visitantes (cedula, nombre, apellido, area, rol, fecha, horaIngreso, horaSalida, huella) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try {
-        con=conexion.conectar();
-        pstmt=con.prepareStatement(sql);
-        pstmt.setInt(1, visitante.getCedula());
-        pstmt.setString(2, visitante.getNombre());
-        pstmt.setString(3, visitante.getApellido());
-        pstmt.setString(4, visitante.getArea());
-        pstmt.setString(5, visitante.getRol());
-        pstmt.setDate(6, visitante.getFecha());
-        pstmt.setTime(7, visitante.getHoraIngreso());
-        pstmt.setTime(8, visitante.getHoraSalida());
-        pstmt.setBytes(9, visitante.getHuella());
-        pstmt.executeUpdate();
-    } catch (Exception e) {
-        System.out.println("Error al guardar visitante: " + e.toString());
-    } finally {
+public void cargarVisitantesDesdeBaseDeDatos() {
         try {
-            if (pstmt != null) {
-                pstmt.close();
-            }
+            listaVisitantes.clear();
+            listaVisitantes.addAll(visitanteDAO.CargarVisitantesDB());
         } catch (Exception e) {
-            System.out.println("Error al cerrar recursos: " + e.toString());
+            System.out.println("Error al cargar visitantes: " + e.toString());
         }
-    }}
-private void SalidaVisitante(Visitantes visitante) {
-    String sql = "UPDATE visitantes SET horaSalida = ? WHERE cedula = ?";
-    try {
-        con=conexion.conectar();
-        pstmt = con.prepareStatement(sql);
-        pstmt.setTime(1, visitante.getHoraSalida());
-        pstmt.setInt(2, visitante.getCedula());
-        pstmt.executeUpdate();
-    } catch (Exception e) {
-        System.out.println("Error al registrar salida: " + e.toString());
-    } finally {
-        try {
-            if (pstmt != null) {
-                pstmt.close();
-            }
-        } catch (Exception e) {
-            System.out.println("Error al cerrar recursos: " + e.toString());
-        }
-    }}
+    }
     private void configurarEventoTabla() {
         tablaVisitantes.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -251,43 +270,6 @@ private void SalidaVisitante(Visitantes visitante) {
     public ObservableList<Visitantes> getListaVisitantes() {
         return listaVisitantes;
         }
-        public void cargarVisitantesDesdeBaseDeDatos() {
-        String sql = "SELECT * FROM visitantes";
-        try {
-            con = conexion.conectar();
-            pstmt = con.prepareStatement(sql);
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int cedula = rs.getInt("cedula");
-                String nombre = rs.getString("nombre");
-                String apellido = rs.getString("apellido");
-                String area = rs.getString("area");
-                String rol = rs.getString("rol");
-                Date fecha = rs.getDate("fecha");
-                Time horaIngreso = rs.getTime("horaIngreso");
-                Time horaSalida = rs.getTime("horaSalida");
-                byte[] huella = rs.getBytes("huella");
-                Visitantes visitante = new Visitantes(cedula, nombre, apellido, area, rol, fecha, horaIngreso, horaSalida, huella);
-                listaVisitantes.add(visitante);
-            }
-        } catch (Exception e) {
-            System.out.println("Error al cargar visitantes: " + e.toString());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception e) {
-                System.out.println("Error al cerrar recursos: " + e.toString());
-            }
-        }
-    }
     private void mostrarMensaje(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Información");
@@ -295,4 +277,43 @@ private void SalidaVisitante(Visitantes visitante) {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+private void BuscarVisita(String busqueda) {
+    try {
+        listaVisitantes.clear();
+
+        if (busqueda == null || busqueda.isEmpty()) {
+            listaVisitantes.addAll(dao.CargarVisitantesDB());
+        } else {
+            // Búsqueda limpia
+            busqueda = busqueda.trim();
+            List<Visitantes> resultados = dao.buscarVisitantes(busqueda);
+
+            if (!resultados.isEmpty()) {
+                listaVisitantes.addAll(resultados);
+            } // Si no hay resultados, opcionalmente no mostrar mensaje inmediato
+        }
+
+    } catch (Exception e) {
+        mostrarMensaje("Error al buscar visitantes: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+private void actualizarVisitasHoy() {
+    try {
+        int total = dao.contarVisitasHoy();
+        VIngresada.setText(String.valueOf(total));
+    } catch (Exception e) {
+        mostrarMensaje("Error al contar visitas: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+private void VisitantePorSalir() {
+    try {
+        int total = dao.VisitasFaltante();
+        VSalir.setText(String.valueOf(total));
+    } catch (Exception e) {
+        mostrarMensaje("Error al contar visitas: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
 }

@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import com.example.DAO.IngresosDAO;
 import com.example.Modelo.ingreso;
 
 /**

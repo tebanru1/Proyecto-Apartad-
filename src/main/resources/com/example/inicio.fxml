@@ -1,131 +1,246 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="V_inicio" prefHeight="798.0" prefWidth="1397.0" styleClass="root" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.Controlador.InicioController">
-   <children>
-      <VBox fx:id="Ingreso" layoutX="17.0" layoutY="68.0" prefHeight="442.0" prefWidth="402.0" styleClass="Ingreso" stylesheets="@styles.css">
-         <children>
-            <AnchorPane fx:id="btningreso" prefHeight="442.0" prefWidth="398.0">
-               <children>
-                  <TextField fx:id="TFCedula" layoutX="91.0" layoutY="228.0" prefHeight="36.0" prefWidth="214.0" promptText="Numero de Cedúla">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </TextField>
-                  <Label layoutX="86.0" layoutY="196.0" text="Ingrese Cedúla de ciudadania:">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="btnIngreso" layoutX="149.0" layoutY="303.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="98.0" styleClass="btn_Ingreso" text="INGRESO" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
-                  <Button fx:id="btnSalida" layoutX="149.0" layoutY="352.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="98.0" styleClass="btn_salida" stylesheets="@styles.css" text="SALIDA" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
-                  <Pane layoutX="102.0" layoutY="14.0" prefHeight="179.0" prefWidth="176.0">
-                     <children>
-                        <ImageView fitHeight="176.0" fitWidth="171.0" layoutX="3.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@escudo_colombia.png" />
-                           </image>
-                        </ImageView>
-                     </children>
-                  </Pane>
-               </children>
-            </AnchorPane>
-         </children>
-      </VBox>
-      <AnchorPane layoutX="481.0" layoutY="68.0" prefHeight="442.0" prefWidth="753.0">
-         <children>
-            <ImageView fitHeight="442.0" fitWidth="809.0" layoutX="-54.0" pickOnBounds="true">
-               <image>
-                  <Image url="@Carcel.jpg" />
-               </image>
-            </ImageView>
-         </children>
-      </AnchorPane>
-      <HBox prefHeight="63.0" prefWidth="1234.0">
-         <children>
-            <AnchorPane prefHeight="63.0" prefWidth="1233.0">
-               <children>
-                  <Label layoutX="14.0" layoutY="5.0" text="CPMS APARTADÓ">
-                     <font>
-                        <Font name="Times New Roman" size="48.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
-         </children>
-      </HBox>
-      <VBox layoutX="17.0" layoutY="515.0" prefHeight="234.0" prefWidth="406.0" styleClass="Ingreso" stylesheets="@styles.css">
-         <children>
-            <AnchorPane prefHeight="238.0" prefWidth="402.0">
-               <children>
-                  <Label layoutX="138.0" layoutY="4.0" text="AUTORIZACIONES">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <TableView fx:id="table_view" layoutX="2.0" layoutY="24.0" prefHeight="200.0" prefWidth="398.0" stylesheets="@styles.css">
-                     <columns>
-                        <TableColumn fx:id="TableColumn" prefWidth="288.00006103515625" text="ARCHIVOS PDF" />
-                        <TableColumn fx:id="columnaFecha" minWidth="0.0" prefWidth="78.39996337890625" text="FECHA" />
-                     </columns>
-                     <styleClass>
-                        <String fx:value="table-row-cell" />
-                        <String fx:value="column-header-background" />
-                        <String fx:value="table-column" />
-                        <String fx:value="table-cell" />
-                        <String fx:value="column-header" />
-                        <String fx:value="table-view" />
-                     </styleClass>
-                  </TableView>
-               </children>
-            </AnchorPane>
-         </children>
-      </VBox>
-      <VBox layoutX="427.0" layoutY="517.0" prefHeight="234.0" prefWidth="402.0" styleClass="Ingreso" stylesheets="@styles.css">
-         <children>
-            <AnchorPane prefHeight="238.0" prefWidth="398.0">
-               <children>
-                  <Label layoutX="135.0" layoutY="4.0" text="INGRESOS DEL DÍA">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
-         </children>
-      </VBox>
-      <VBox layoutX="838.0" layoutY="515.0" prefHeight="234.0" prefWidth="402.0" styleClass="Ingreso" stylesheets="@styles.css">
-         <children>
-            <AnchorPane prefHeight="225.0" prefWidth="398.0" />
-         </children>
-      </VBox>
-   </children>
+<AnchorPane fx:id="V_inicio" style="-fx-background-color: #E6F0FA;" stylesheets="@inicio.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.Controlador.InicioController">
+    <children>
+        <!-- Main vertical layout -->
+        <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+            <!-- Header -->
+            <HBox alignment="CENTER" prefHeight="100.0" style="-fx-background-color: #002C6E;" VBox.vgrow="NEVER">
+                <children>
+                    <ImageView fitHeight="103.0" fitWidth="95.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@escudo_colombia.png" />
+                        </image>
+                        <HBox.margin>
+                            <Insets top="5.0" />
+                        </HBox.margin>
+                    </ImageView>
+
+                    <VBox alignment="CENTER_LEFT" spacing="2.0" HBox.hgrow="ALWAYS">
+                        <children>
+                            <Label text="INPEC" textFill="#ffd300">
+                                <font>
+                                    <Font name="Segoe UI Black" size="18.0" />
+                                </font>
+                                <VBox.margin>
+                                    <Insets left="5.0" />
+                                </VBox.margin>
+                            </Label>
+                            <Label text="Instituto Nacional Penitenciario" textFill="WHITE">
+                                <font>
+                                    <Font name="Segoe UI Semibold Italic" size="16.0" />
+                                </font>
+                                <VBox.margin>
+                                    <Insets left="5.0" />
+                                </VBox.margin>
+                            </Label>
+                        </children>
+                    </VBox>
+
+                    <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                        <children>
+                            <Label text="CPMS APARTADÓ" textFill="WHITE">
+                                <font>
+                                    <Font name="Segoe UI Black" size="28.0" />
+                                </font>
+                            </Label>
+                            <Label text="Control de Ingreso Biométrico" textFill="WHITE">
+                                <font>
+                                    <Font name="Segoe UI Semibold" size="18.0" />
+                                </font>
+                            </Label>
+                        </children>
+                    </VBox>
+                </children>
+            </HBox>
+
+            <!-- Content area -->
+            <HBox spacing="15.0" VBox.vgrow="ALWAYS">
+                <children>
+
+                    <!-- Left: ingreso administrativos -->
+                    <AnchorPane maxWidth="600.0" styleClass="card-ingresos" HBox.hgrow="ALWAYS">
+                        <children>
+                            <VBox fx:id="IngresoAdmin" alignment="CENTER" spacing="12.0" styleClass="tarjeta-ingreso" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <children>
+                                    <Label text="INGRESO ADMINISTRATIVOS" textFill="#002b5b">
+                                        <font>
+                                            <Font name="Segoe UI Black" size="18.0" />
+                                        </font>
+                                    </Label>
+
+                                    <HBox alignment="CENTER" spacing="8.0" VBox.vgrow="ALWAYS">
+                                        <children>
+                                            <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
+                                                        <image>
+                                                            <Image url="@usuario.png" />
+                                                        </image>
+                                                    </ImageView>
+                                                </children>
+                                            </VBox>
+
+                                            <VBox alignment="CENTER_LEFT" maxWidth="250.0" spacing="6.0" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label styleClass="label-admin" text="Nombre:" />
+                                                    <TextField editable="false" minHeight="45.0" promptText="Nombre" styleClass="text-field-readonly" />
+
+                                                    <Label styleClass="label-admin" text="Cargo:" />
+                                                    <TextField editable="false" minHeight="45.0" promptText="Cargo" styleClass="text-field-readonly" />
+
+                                                    <Label styleClass="label-admin" text="Hora Ingreso:" />
+                                                    <TextField editable="false" minHeight="45.0" promptText="Hora" styleClass="text-field-readonly">
+                                          <VBox.margin>
+                                             <Insets right="120.0" />
+                                          </VBox.margin></TextField>
+
+                                                    <Label styleClass="label-admin" text="Hora Salida:" />
+                                                    <TextField editable="false" minHeight="45.0" promptText="Hora" styleClass="text-field-readonly">
+                                          <VBox.margin>
+                                             <Insets right="120.0" />
+                                          </VBox.margin></TextField>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                        <padding>
+                                            <Insets left="10.0" right="10.0" />
+                                        </padding>
+                                    </HBox>
+
+                                    <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+                                        <children>
+                                            <VBox HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label styleClass="label-admin" text="Documento:" />
+                                                    <TextField minHeight="45.0" promptText="Documento" styleClass="text-field-editable" />
+                                                </children>
+                                    <HBox.margin>
+                                       <Insets left="65.0" right="65.0" />
+                                    </HBox.margin>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+
+                                    <HBox alignment="CENTER" spacing="40.0" VBox.vgrow="ALWAYS">
+                                        <children>
+                                            <VBox alignment="CENTER" prefWidth="120.0" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label styleClass="label-admin" text="Huella Ingreso" VBox.vgrow="ALWAYS" />
+                                                    <AnchorPane styleClass="huella-card" VBox.vgrow="ALWAYS" />
+                                                </children>
+                                            </VBox>
+
+                                            <VBox alignment="CENTER" prefWidth="120.0" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label styleClass="label-admin" text="Huella Salida" VBox.vgrow="ALWAYS" />
+                                                    <AnchorPane styleClass="huella-card" VBox.vgrow="ALWAYS" />
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+
+                                </children>
+                            </VBox>
+                        </children>
+                    </AnchorPane>
+
+                    <!-- Right: imagen + tarjetas resumen -->
+                    <VBox alignment="CENTER" spacing="12.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+
+                        <!-- Imagen (contenedor con clip aplicado desde controller) -->
+                        <AnchorPane fx:id="ContenedorImagen" maxHeight="500.0" minHeight="300.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                            <children>
+                                <ImageView fx:id="imagenCarccel" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                            </children>
+                        </AnchorPane>
+
+                        <!-- Tarjetas resumen -->
+                        <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
+                            <children>
+                                <VBox alignment="CENTER" spacing="8.0" styleClass="card-ingresos" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="card-autorizaciones-card-title" text="INGRESOS" textFill="#002b5b" />
+                                        <HBox alignment="CENTER" spacing="8.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <ImageView fitHeight="43.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@silueta-de-multiples-usuarios.png" />
+                                                    </image>
+                                                </ImageView>
+                                                <Label styleClass="card-titulo" text="Visitantes Hoy" textFill="WHITE" />
+                                                <Label styleClass="card-numero" text="0" />
+                                            </children>
+                                 <styleClass>
+                                    <String fx:value="card-item-visitantes" />
+                                    <String fx:value="card-item" />
+                                 </styleClass>
+                                        </HBox>
+
+                                        <HBox alignment="CENTER" spacing="8.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <ImageView fitHeight="43.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@lider.png" />
+                                                    </image>
+                                                </ImageView>
+                                                <Label styleClass="card-titulo" text="Administrativos" textFill="WHITE" />
+                                                <Label styleClass="card-numero" text="0" />
+                                            </children>
+                                 <styleClass>
+                                    <String fx:value="card-item" />
+                                    <String fx:value="card-item-admin" />
+                                 </styleClass>
+                                        </HBox>
+
+                                        <HBox alignment="CENTER" spacing="8.0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <ImageView fitHeight="43.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@salida.png" />
+                                                    </image>
+                                                </ImageView>
+                                                <Label styleClass="card-titulo" text="Salidas Pendientes" textFill="WHITE" />
+                                                <Label styleClass="card-numero" text="0" />
+                                            </children>
+                                 <styleClass>
+                                    <String fx:value="card-item" />
+                                    <String fx:value="card-item-salidas" />
+                                 </styleClass>
+                                        </HBox>
+
+                                    </children>
+                                </VBox>
+
+                                <VBox alignment="CENTER" styleClass="card-autorizaciones" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="card-autorizaciones-card-title" text="AUTORIZACIONES" textFill="#002b5b" />
+                                        <AnchorPane fx:id="ContenedorAutorizaciones" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+
+                    </VBox>
+
+                </children>
+            <padding>
+               <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+            </padding>
+            </HBox>
+
+        </VBox>
+    </children>
 </AnchorPane>

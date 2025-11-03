@@ -29,7 +29,7 @@ public class PrincipalController implements Initializable {
     private Button btnInicio;
 
     @FXML
-    private Button btnGenerarCodigo;
+    private Button btnCodigo;
 
     @FXML
     private Button btnAutorizaciones;
@@ -59,7 +59,7 @@ public class PrincipalController implements Initializable {
     private void configurarEventos() {
        
         // Evento del botón de generar código
-        btnGenerarCodigo.setOnAction(event -> cargarGenerarCodigo());
+        btnCodigo.setOnAction(event -> cargarGenerarCodigo());
 
         btnAutorizaciones.setOnAction(event->Autorizaciones());
         
@@ -111,31 +111,31 @@ public class PrincipalController implements Initializable {
     /**
      * Vuelve a la pantalla principal
      */
-    @FXML
-    private void volverInicio() {
-        try {
-            // Limpiar el contenido actual del root
-            root.getChildren().clear();
-            
-            // Cargar el FXML principal
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/inicio.fxml"));
-            Parent contenidoPrincipal = loader.load();
-            
-            // Agregar el contenido al root
-            root.getChildren().add(contenidoPrincipal);
-            
-            // Anclar el contenido al root
-            AnchorPane.setTopAnchor(contenidoPrincipal, 0.0);
-            AnchorPane.setBottomAnchor(contenidoPrincipal, 0.0);
-            AnchorPane.setLeftAnchor(contenidoPrincipal, 0.0);
-            AnchorPane.setRightAnchor(contenidoPrincipal, 0.0);
-        } catch (Exception e) {
-            mostrarMensaje("Error al volver al inicio: " + e.getMessage(), Alert.AlertType.ERROR);
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            
-        }
+   @FXML
+private void volverInicio() {
+    try {
+        // Limpiar el contenido actual del root
+        root.getChildren().clear();
+
+        // Cargar el FXML de inicio
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/inicio.fxml"));
+        AnchorPane V_inicio = loader.load(); // Asegúrate que el FXML raíz es AnchorPane
+
+        // 🔹 Anclar V_inicio a los bordes de root
+        AnchorPane.setTopAnchor(V_inicio, 0.0);
+        AnchorPane.setBottomAnchor(V_inicio, 0.0);
+        AnchorPane.setLeftAnchor(V_inicio, 0.0);
+        AnchorPane.setRightAnchor(V_inicio, 0.0);
+
+        // Agregar V_inicio al root
+        root.getChildren().add(V_inicio);
+
+    } catch (Exception e) {
+        mostrarMensaje("Error al volver al inicio: " + e.getMessage(), Alert.AlertType.ERROR);
+        e.printStackTrace();
     }
+}
+
     @FXML
     private void ModuloVisitas() {
         try {
@@ -145,7 +145,7 @@ public class PrincipalController implements Initializable {
             // Cargar el FXML principal
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/visitante.fxml"));
             Parent contenidoVisitas = loader.load();
-            
+           
             // Agregar el contenido al root
             root.getChildren().add(contenidoVisitas);
             
@@ -161,7 +161,7 @@ public class PrincipalController implements Initializable {
         System.out.println(e.getMessage());
         }
     }
-    @FXML
+    
     private void Autorizaciones() {
         try {
             // Limpiar el contenido actual del root
@@ -169,16 +169,18 @@ public class PrincipalController implements Initializable {
             
             // Cargar el FXML principal
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/autorizaciones.fxml"));
-            Parent contenidoVisitas = loader.load();
+            Parent contenidoAutorizaciones= loader.load();
             
+
             // Agregar el contenido al root
-            root.getChildren().add(contenidoVisitas);
+           
             
             // Anclar el contenido al root
-            AnchorPane.setTopAnchor(contenidoVisitas, 0.0);
-            AnchorPane.setBottomAnchor(contenidoVisitas, 0.0);
-            AnchorPane.setLeftAnchor(contenidoVisitas, 0.0);
-            AnchorPane.setRightAnchor(contenidoVisitas, 0.0);
+            AnchorPane.setTopAnchor(contenidoAutorizaciones, 0.0);
+            AnchorPane.setBottomAnchor(contenidoAutorizaciones, 0.0);
+            AnchorPane.setLeftAnchor(contenidoAutorizaciones, 0.0);
+            AnchorPane.setRightAnchor(contenidoAutorizaciones, 0.0);
+             root.getChildren().add(contenidoAutorizaciones);
          
         } catch (Exception e) {
             mostrarMensaje("Error al cargar el modulo Autorizaciones: " + e.getMessage(), Alert.AlertType.ERROR);

@@ -1,4 +1,4 @@
-package com.example.Controlador;
+package com.example.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
+import com.example.Controlador.Conexion;
 import com.example.Modelo.ingreso;
 
 public class IngresosDAO {

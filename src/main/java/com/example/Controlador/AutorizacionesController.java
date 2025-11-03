@@ -1,5 +1,6 @@
 package com.example.Controlador;
 
+import com.example.DAO.AutorizacionesDAO;
 import com.example.Modelo.Autorizaciones;
 
 import javafx.collections.FXCollections;
@@ -13,10 +14,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
@@ -61,10 +59,7 @@ public class AutorizacionesController implements Initializable {
     @FXML
     private DatePicker fechaterminacion;
 
-    private Conexion conexion;
-    private Connection con;
-    private PreparedStatement pst;
-    private ResultSet rs;
+    private AutorizacionesDAO autorizacionesDAO;
     private ObservableList<Autorizaciones> listaAutorizaciones;
 
     // <<--- Variable para almacenar el PDF seleccionado
@@ -72,7 +67,7 @@ public class AutorizacionesController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        conexion = new Conexion();
+        autorizacionesDAO = new AutorizacionesDAO();
         ConfigurarComboBox();
         configurarEventos();
         configurarTablaAutorizaciones();
@@ -82,8 +77,6 @@ public class AutorizacionesController implements Initializable {
 
     private void configurarEventos() {
         btncargarArchivo.setOnAction(event -> cargarArchivo((Stage) btncargarArchivo.getScene().getWindow()));
-
-      
         btnSubirBD.setOnAction(event -> subir());
         filtrar.setOnAction(event -> filtrarAutorizaciones());
         btnEliminarArchivo.setOnAction(event -> EliminarAutorizacion());
@@ -113,46 +106,28 @@ private void configurarEventoTabla() {
 }
 
 private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
-    String sql = "SELECT PDFs FROM Autorizaciones WHERE id = ?";
-
     try {
-        con = conexion.conectar();
-        pst = con.prepareStatement(sql);
-        pst.setInt(1, idAutorizacion);
-        ResultSet rs = pst.executeQuery();
-
-        if (rs.next()) {
-            byte[] pdfBytes = rs.getBytes("PDFs");
-
-            String nombreArchivo = descripcion.replaceAll("[^a-zA-Z0-9\\-_\\.]", "_"); 
-            PDF = File.createTempFile(nombreArchivo + "_",".pdf");
-            try (FileOutputStream fos = new FileOutputStream(PDF)) {
-                fos.write(pdfBytes);
-            }
-
-            archivonombre.setText(PDF.getName());
-            System.out.println("PDF cargado: " + PDF.getAbsolutePath());
-
-            if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().open(PDF);
-            } else {
-                mostrarMensaje("No se puede abrir el PDF en este sistema.");
-            }
-
-        } else {
+        byte[] pdfBytes = autorizacionesDAO.obtenerPDFPorId(idAutorizacion);
+        if (pdfBytes == null || pdfBytes.length == 0) {
             mostrarMensaje("No se encontró PDF en la base de datos.");
+            return;
         }
 
-        rs.close();
+        String nombreArchivo = descripcion.replaceAll("[^a-zA-Z0-9\\-_\\.]", "_");
+        PDF = File.createTempFile(nombreArchivo + "_", ".pdf");
+        try (FileOutputStream fos = new FileOutputStream(PDF)) {
+            fos.write(pdfBytes);
+        }
+
+        archivonombre.setText(PDF.getName());
+
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().open(PDF);
+        } else {
+            mostrarMensaje("No se puede abrir el PDF en este sistema.");
+        }
     } catch (Exception e) {
         mostrarMensaje("Error al abrir PDF desde DB: " + e.getMessage());
-    } finally {
-        try {
-            if (pst != null) pst.close();
-            if (con != null) con.close();
-        } catch (Exception e) {
-            mostrarMensaje("Error al cerrar la conexión: " + e.getMessage());
-        }
     }
 }
 
@@ -224,7 +199,7 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
 
     private void subir() {
         try {
-            int id = 0; 
+            int id = 0;
             String descripcion = txtDescripcion.getText().toUpperCase();
             String area = AREA.getValue();
             String tipo = TIPO.getValue();
@@ -239,123 +214,47 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
 
             byte[] PDFs = java.nio.file.Files.readAllBytes(PDF.toPath());
 
-            Autorizaciones autorizaciones = new Autorizaciones(id,descripcion, area, tipo, fechaInicio,
+            Autorizaciones autorizaciones = new Autorizaciones(id, descripcion, area, tipo, fechaInicio,
                     fechaTerminacion, fechaGeneracion, PDFs);
 
-            subirArchivoDB(autorizaciones);
-            listaAutorizaciones.add(autorizaciones);
-            mostrarMensaje("Archivo subido correctamente.");
-            limpiarCampos();
+            int nuevoId = autorizacionesDAO.guardar(autorizaciones);
+            if (nuevoId > 0) {
+                autorizaciones.setId(nuevoId);
+                listaAutorizaciones.add(autorizaciones);
+                mostrarMensaje("Archivo subido correctamente.");
+                limpiarCampos();
+            } else {
+                mostrarMensaje("Error al subir el archivo a la base de datos.");
+            }
         } catch (Exception e) {
             System.out.println("Error al subir autorización: " + e.getMessage());
         }
     }
 
-    private void subirArchivoDB(Autorizaciones autorizaciones) {
-        String sql = "INSERT INTO Autorizaciones(descripcion,area,tipo,fechaInicio,fechaTerminacion,fechaGeneracion,PDFs) VALUES(?,?,?,?,?,?,?)";
+    private void filtrarAutorizaciones() {
         try {
-            con = conexion.conectar();
-            pst = con.prepareStatement(sql);
-            pst.setString(1, autorizaciones.getDescripcion());
-            pst.setString(2, autorizaciones.getArea());
-            pst.setString(3, autorizaciones.getTipo());
-            pst.setDate(4, autorizaciones.getFechaInicio());
-            pst.setDate(5, autorizaciones.getFechaTerminacion());
-            pst.setDate(6, Date.valueOf(LocalDate.now()));
-            pst.setBytes(7, autorizaciones.getPDFs());
-
-            int filasAfectadas = pst.executeUpdate();
-            if (filasAfectadas > 0) {
-                mostrarMensaje("Archivo subido correctamente a la base de datos.");
-            } else {
-                mostrarMensaje("Error al subir el archivo a la base de datos.");
+            String areaSeleccionada = filtrar.getValue();
+            if (areaSeleccionada == null || areaSeleccionada.isEmpty()) {
+                mostrarMensaje("Por favor seleccione un área antes de filtrar.");
+                return;
             }
+            listaAutorizaciones.clear();
+            listaAutorizaciones.addAll(autorizacionesDAO.filtrarPorArea(areaSeleccionada));
+            if (listaAutorizaciones.isEmpty()) mostrarMensaje("No se encontraron autorizaciones para el área seleccionada.");
         } catch (Exception e) {
-            System.out.println("Error al subir el archivo: " + e.getMessage());
-        } finally {
-            try {
-                if (pst != null) pst.close();
-                if (con != null) con.close();
-            } catch (Exception e) {
-                System.out.println("Error al cerrar la conexión: " + e.getMessage());
-            }
+            mostrarMensaje("Error al filtrar autorizaciones: " + e.getMessage());
         }
     }
-private void filtrarAutorizaciones() {
 
-    if (filtrar.getValue() == null || filtrar.getValue().isEmpty()) {
-        mostrarMensaje("Por favor seleccione un área antes de filtrar.");
-        return;
-    }
-
-    String areaSeleccionada = filtrar.getValue();
-    String sql;
-    if (areaSeleccionada.equalsIgnoreCase("TODAS")) {
-        sql = "SELECT * FROM Autorizaciones";
-    } else {
-        sql = "SELECT * FROM Autorizaciones WHERE area = ?";
-    }
-
-    try {
-        con = conexion.conectar();
-        pst = con.prepareStatement(sql);
-
-        if (!areaSeleccionada.equalsIgnoreCase("Todas")) {
-            pst.setString(1, areaSeleccionada);
-        }
-
-        rs = pst.executeQuery();
-        listaAutorizaciones.clear();
-
-        boolean hayResultados = false;
-
-        while (rs.next()) {
-            Autorizaciones autorizacion = new Autorizaciones(
-                    rs.getInt("id"),
-                    rs.getString("descripcion"),
-                    rs.getString("area"),
-                    rs.getString("tipo"),
-                    rs.getDate("fechaInicio"),
-                    rs.getDate("fechaTerminacion"),
-                    rs.getDate("fechaGeneracion").toString(),
-                    rs.getBytes("PDFs")
-            );
-            listaAutorizaciones.add(autorizacion);
-            hayResultados = true;
-        }
-
-        if (!hayResultados) {
-            mostrarMensaje("No se encontraron autorizaciones para el área seleccionada.");
-        }
-
-    } catch (Exception e) {
-        mostrarMensaje("Error al filtrar autorizaciones: " + e.getMessage());
-    } finally {
-        try {
-            if (rs != null) rs.close();
-            if (pst != null) pst.close();
-            if (con != null) con.close();
-        } catch (Exception e) {
-            mostrarMensaje("Error al cerrar la conexión: " + e.getMessage());
-        }
-    }
-}
-private void EliminarAutorizacion() {
+    private void EliminarAutorizacion() {
         Autorizaciones autorizacionSeleccionada = tablaAutorizaciones.getSelectionModel().getSelectedItem();
         if (autorizacionSeleccionada == null) {
             mostrarMensaje("Por favor seleccione una autorización para eliminar.");
             return;
         }
-
-        String sql = "DELETE FROM Autorizaciones WHERE id = ? ";
-
         try {
-            con = conexion.conectar();
-            pst = con.prepareStatement(sql);
-            pst.setInt(1, autorizacionSeleccionada.getId());
-
-            int filasAfectadas = pst.executeUpdate();
-            if (filasAfectadas > 0) {
+            boolean ok = autorizacionesDAO.eliminar(autorizacionSeleccionada.getId());
+            if (ok) {
                 listaAutorizaciones.remove(autorizacionSeleccionada);
                 mostrarMensaje("Autorización eliminada correctamente.");
                 limpiarCampos();
@@ -364,45 +263,15 @@ private void EliminarAutorizacion() {
             }
         } catch (Exception e) {
             mostrarMensaje("Error al eliminar autorización: " + e.getMessage());
-        } finally {
-            try {
-                if (pst != null) pst.close();
-                if (con != null) con.close();
-            } catch (Exception e) {
-                mostrarMensaje("Error al cerrar la conexión: " + e.getMessage());
-            }
         }
-    }   
+    }
 
     private void cargarAutorizacionesDesdeBaseDeDatos() {
-        String sql = "SELECT * FROM Autorizaciones";
         try {
-            con = conexion.conectar();
-            pst = con.prepareStatement(sql);
-            var rs = pst.executeQuery();
             listaAutorizaciones.clear();
-            while (rs.next()) {
-                Autorizaciones autorizacion = new Autorizaciones(
-                        rs.getInt("id"),
-                        rs.getString("descripcion"),
-                        rs.getString("area"),
-                        rs.getString("tipo"),
-                        rs.getDate("fechaInicio"),
-                        rs.getDate("fechaTerminacion"),
-                        rs.getDate("fechaGeneracion").toString(),
-                        rs.getBytes("PDFs")
-                );
-                listaAutorizaciones.add(autorizacion);
-            }
+            listaAutorizaciones.addAll(autorizacionesDAO.listarTodas());
         } catch (Exception e) {
             System.out.println("Error al cargar autorizaciones: " + e.getMessage());
-        } finally {
-            try {
-                if (pst != null) pst.close();
-                if (con != null) con.close();
-            } catch (Exception e) {
-                System.out.println("Error al cerrar la conexión: " + e.getMessage());
-            }
         }
     }   
 }

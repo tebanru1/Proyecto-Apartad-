@@ -1,0 +1,189 @@
+/* ============================
+   TARJETAS GENERALES
+   ============================ */
+.card-ingresos {
+    -fx-background-color: white;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 4);
+    -fx-padding: 20;
+}
+
+.tarjeta-ingreso {
+    -fx-background-color: linear-gradient(to bottom, #ffffff, #f6f9ff);
+    -fx-border-color: #1c3b70; /* Azul institucional INPEC */
+    -fx-border-width: 2;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(28,59,112,0.25), 12, 0, 3, 3);
+    -fx-padding: 20;
+}
+
+.card-admin {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,44,110,0.15), 10, 0, 3, 3);
+    -fx-padding: 25;
+}
+
+.card-autorizaciones {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,44,110,0.15), 10, 0, 3, 3);
+    -fx-padding: 15;
+}
+
+/* ============================
+   TARJETAS INTERNAS / ITEMS
+   ============================ */
+.card-item {
+    -fx-background-radius: 15px;
+    -fx-alignment: center;
+    -fx-spacing: 5;
+}
+
+.card-item-visitantes {
+    -fx-background-color: linear-gradient(to bottom, #5A8FD9, #2A4F9C);
+}
+
+.card-item-admin {
+    -fx-background-color: linear-gradient(to bottom, #1ABC9C, #16A085);
+}
+
+.card-item-salidas {
+    -fx-background-color: linear-gradient(to bottom, #F1C40F, #D4AC0D);
+}
+
+.card-numero {
+    -fx-text-fill: white;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+
+.card-subtitulo {
+    -fx-text-fill: rgba(255,255,255,0.8);
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* ============================
+   TITULOS Y ENCABEZADOS
+   ============================ */
+
+.card-autorizaciones-card-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-text-fill: #002C6E;
+    -fx-border-color: #002C6E;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 8 0;
+}
+
+.label-admin {
+    -fx-text-fill: #002C6E;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+/* ============================
+   BOTONES
+   ============================ */
+.btn-registrar {
+    -fx-background-color: linear-gradient(to right, #002C6E, #004B9B);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 8 25;
+    -fx-font-size: 13px;
+}
+
+.btn-registrar:hover {
+    -fx-background-color: linear-gradient(to right, #004B9B, #0066CC);
+}
+
+/* ============================
+   HUELLAS / ICONOS INTERACTIVOS
+   ============================ */
+.huella-card {
+    -fx-background-color: #F8F9FB;
+    -fx-border-color: #C5D1E0;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-min-width: 120;
+    -fx-min-height: 140;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 2, 2);
+}
+
+.huella-card:hover {
+    -fx-background-color: #E6F0FA;
+    -fx-border-color: #004B9B;
+    -fx-effect: dropshadow(gaussian, rgba(0,75,155,0.25), 8, 0, 2, 3);
+}
+
+/* ============================
+   CAMPOS DE TEXTO
+   ============================ */
+/* Editable */
+.text-field-editable {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #C5D1E0;
+    -fx-border-radius: 10;
+    -fx-padding: 8 10;
+    -fx-font-size: 13px;
+}
+
+.text-field-editable:focused {
+    -fx-border-color: #004B9B;
+    -fx-effect: dropshadow(gaussian, rgba(0,75,155,0.3), 5, 0, 0, 2);
+}
+
+/* Solo lectura */
+.text-field-readonly {
+    -fx-background-color: #F1F3F6;
+    -fx-border-color: #D5D9E0;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-opacity: 0.8;
+    -fx-font-size: 13px;
+    -fx-text-fill: #002C6E;
+}
+
+/* ====== TARJETA DE AUTORIZACIONES ====== */
+.card-autorizaciones-lista {
+    -fx-background-color: transparent;
+}
+
+.card-autorizaciones-fila {
+    -fx-background-color: white;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6;
+}
+
+.card-autorizaciones-fila:hover {
+    -fx-background-color: #F0F8FF;
+}
+
+/* ====== ETIQUETAS ====== */
+.card-autorizaciones-descripcion {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #002B5B;
+}
+
+.card-autorizaciones-fecha {
+    -fx-text-fill: gray;
+    -fx-font-size: 12px;
+}
+
+/* ====== SCROLLPANE ====== */
+.card-autorizaciones-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}

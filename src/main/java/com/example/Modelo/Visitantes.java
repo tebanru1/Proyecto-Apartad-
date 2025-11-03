@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.sql.Time;
 
 public class Visitantes {
-  private int cedula;
+  private long cedula;
   private String nombre;
   private String apellido;
   private String area;
@@ -16,7 +16,7 @@ public class Visitantes {
 
   public Visitantes(){}
 
-    public Visitantes(int cedula, String nombre, String apellido, String area, String rol, Date fecha, Time horaIngreso, Time horaSalida, byte[] huella) {
+    public Visitantes(long cedula, String nombre, String apellido, String area, String rol, Date fecha, Time horaIngreso, Time horaSalida, byte[] huella) {
       this.cedula = cedula;
       this.nombre = nombre;
       this.apellido = apellido;
@@ -28,10 +28,10 @@ public class Visitantes {
       this.huella = huella;
     }
 
-      public int getCedula() {
+      public long getCedula() {
         return cedula;
       }
-      public void setCedula(int cedula) {
+      public void setCedula(long cedula) {
         this.cedula = cedula;
       }
 

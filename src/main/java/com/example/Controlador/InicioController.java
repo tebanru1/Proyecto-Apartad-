@@ -1,202 +1,160 @@
-
 package com.example.Controlador;
 
-import com.example.Modelo.ArchivoPDF;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import com.example.DAO.AutorizacionesDAO;
+import com.example.Modelo.Autorizaciones;
 
 public class InicioController implements Initializable {
 
-    // FXML UI Components
-    @FXML private Button btnIngreso;
-    @FXML private Button btnSalida;
-    @FXML private TextField TFCedula;
-    @FXML private TableView<ArchivoPDF> table_view;
-    @FXML private TableColumn<ArchivoPDF, String> Descripcion;
-    @FXML private TableColumn<ArchivoPDF, String> columnaFecha;
+    @FXML
+    private AnchorPane ContenedorAutorizaciones;
+    @FXML
+    private AnchorPane ContenedorImagen;
 
-    // Data
-    private ObservableList<ArchivoPDF> listaPDFs;
-    private IngresoController ingresoController;
+    private final AutorizacionesDAO dao = new AutorizacionesDAO();
 
-    // Inicialización
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ingresoController = new IngresoController();
-        configurarTablaPDFs();
-        cargarPDFs();
-        configurarEventos();
+        cargarAutorizaciones();
+        cargarimagen();
+        
     }
 
-    // Configuración de la tabla de PDFs
-    private void configurarTablaPDFs() {
-        Descripcion.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        columnaFecha.setCellValueFactory(new PropertyValueFactory<>("fechaModificacion"));
-        listaPDFs = FXCollections.observableArrayList();
-        table_view.setItems(listaPDFs);
-        TFCedula.textProperty().addListener((observable, oldValue, newValue) -> validarCedulaEnTiempoReal());
-    }
-
-    // Configuración de eventos
-    private void configurarEventos() {
-        table_view.setOnMouseClicked(this::manejarClicTabla);
-        btnIngreso.setOnAction(event -> manejarIngreso());
-        btnSalida.setOnAction(event -> manejarSalida());
-    }
-
-    // Maneja el evento de ingreso
-    @FXML
-    private void manejarIngreso() {
-        String cedula = TFCedula.getText().trim();
-        if (cedula.isEmpty()) {
-            mostrarMensaje("Por favor ingrese su número de cédula", Alert.AlertType.WARNING);
-            TFCedula.requestFocus();
-            return;
-        }
-        if (!ingresoController.esCedulaValida(cedula)) {
-            mostrarMensaje("Cédula inválida. Debe contener entre 7 y 10 dígitos numéricos.", Alert.AlertType.ERROR);
-            TFCedula.requestFocus();
-            return;
-        }
-        boolean resultado = ingresoController.registrarIngreso(cedula);
-        if (resultado) {
-            mostrarMensaje("¡INGRESO registrado exitosamente!", Alert.AlertType.INFORMATION);
-            limpiarCampo();
-        } else {
-            mostrarMensaje("Error al registrar el ingreso. Verifique la conexión a la base de datos.", Alert.AlertType.ERROR);
-        }
-    }
-
-    // Maneja el evento de salida
-    @FXML
-    private void manejarSalida() {
-        String cedula = TFCedula.getText().trim();
-        if (cedula.isEmpty()) {
-            mostrarMensaje("Por favor ingrese su número de cédula", Alert.AlertType.WARNING);
-            TFCedula.requestFocus();
-            return;
-        }
-        if (!ingresoController.esCedulaValida(cedula)) {
-            mostrarMensaje("Cédula inválida. Debe contener entre 7 y 10 dígitos numéricos.", Alert.AlertType.ERROR);
-            TFCedula.requestFocus();
-            return;
-        }
-        boolean resultado = ingresoController.registrarIngreso(cedula);
-        if (resultado) {
-            mostrarMensaje("¡SALIDA registrada exitosamente!", Alert.AlertType.INFORMATION);
-            limpiarCampo();
-        } else {
-            mostrarMensaje("Error al registrar la salida. Verifique la conexión a la base de datos.", Alert.AlertType.ERROR);
-        }
-    }
-
-    // Acceso al controlador de ingreso
-    public IngresoController getIngresoController() {
-        return ingresoController;
-    }
-
-    // Cargar PDFs desde la carpeta de documentos
-    private void cargarPDFs() {
+    private void cargarAutorizaciones() {
         try {
-            String rutaDocumentos = System.getProperty("user.home") + File.separator + "Documents";
-            File carpetaDocumentos = new File(rutaDocumentos);
-            if (!carpetaDocumentos.exists()) {
-                mostrarMensaje("No se encontró la carpeta de documentos", Alert.AlertType.WARNING);
-                return;
+            List<Autorizaciones> lista = dao.listarTodas();
+            VBox contenedor = new VBox(8);
+            contenedor.getStyleClass().add("card-autorizaciones-lista");
+            contenedor.setPadding(new Insets(10));
+            contenedor.setAlignment(Pos.TOP_CENTER);
+
+            for (Autorizaciones a : lista) {
+                HBox fila = new HBox(10);
+                fila.setAlignment(Pos.CENTER_LEFT);
+                fila.setPrefWidth(Double.MAX_VALUE);
+                fila.getStyleClass().add("card-autorizaciones-fila");
+
+                // --- Icono PDF ---
+                InputStream iconStream = getClass().getResourceAsStream("/com/example/pdf.png");
+                ImageView pdfIcon = new ImageView();
+                if (iconStream != null) {
+                    pdfIcon.setImage(new Image(iconStream));
+                } 
+                pdfIcon.setFitWidth(24);
+                pdfIcon.setFitHeight(24);
+
+                // --- Descripción ---
+                javafx.scene.control.Label lblDescripcion = new javafx.scene.control.Label(a.getDescripcion());
+                lblDescripcion.getStyleClass().add("card-autorizaciones-descripcion");
+                lblDescripcion.setMaxWidth(Double.MAX_VALUE);
+                HBox.setHgrow(lblDescripcion, Priority.ALWAYS);
+
+                // --- Fecha ---
+                javafx.scene.control.Label lblFecha = new javafx.scene.control.Label(
+                        a.getFechaGeneracion() != null ? a.getFechaGeneracion() : ""
+                );
+                lblFecha.getStyleClass().add("card-autorizaciones-fecha");
+
+                // --- Ensamble ---
+                fila.getChildren().addAll(pdfIcon, lblDescripcion, lblFecha);
+                configurarEventos(fila, a);
+                contenedor.getChildren().add(fila);
             }
-            listaPDFs.clear();
-            File[] archivos = carpetaDocumentos.listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
-            if (archivos != null && archivos.length > 0) {
-                for (File archivo : archivos) {
-                    ArchivoPDF pdf = new ArchivoPDF(archivo);
-                    listaPDFs.add(pdf);
+
+            // --- Scroll ---
+            ScrollPane scroll = new ScrollPane(contenedor);
+            scroll.getStyleClass().add("card-autorizaciones-scroll");
+            scroll.setFitToWidth(true);
+
+            ContenedorAutorizaciones.getChildren().setAll(scroll);
+            AnchorPane.setTopAnchor(scroll, 0.0);
+            AnchorPane.setBottomAnchor(scroll, 0.0);
+            AnchorPane.setLeftAnchor(scroll, 0.0);
+            AnchorPane.setRightAnchor(scroll, 0.0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error al cargar autorizaciones", e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void configurarEventos(HBox fila, Autorizaciones autorizacion) {
+        fila.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                try {
+                    byte[] datosPDF = dao.obtenerPDFPorId(autorizacion.getId());
+                    if (datosPDF != null && datosPDF.length > 0) {
+                        File archivoTemporal = File.createTempFile("autorizacion_" + autorizacion.getId(), ".pdf");
+                        try (FileOutputStream fos = new FileOutputStream(archivoTemporal)) {
+                            fos.write(datosPDF);
+                        }
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().open(archivoTemporal);
+                        } else {
+                            mostrarAlerta("Advertencia", "El sistema no soporta apertura automática de PDF.", Alert.AlertType.WARNING);
+                        }
+                    } else {
+                        mostrarAlerta("Sin PDF", "No se encontró un archivo PDF para esta autorización.", Alert.AlertType.WARNING);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    mostrarAlerta("Error al abrir PDF", e.getMessage(), Alert.AlertType.ERROR);
                 }
-                listaPDFs.sort((a, b) -> b.getArchivo().lastModified() > a.getArchivo().lastModified() ? 1 : -1);
-                System.out.println("Se cargaron " + listaPDFs.size() + " archivos PDF");
-            } else {
-                mostrarMensaje("No se encontraron archivos PDF en la carpeta de documentos", Alert.AlertType.INFORMATION);
             }
-        } catch (Exception e) {
-            mostrarMensaje("Error al cargar los PDFs: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
-        }
+        });
     }
+    private void cargarimagen() {
+    try {
+        // fondo con cover centrado
+        ContenedorImagen.setStyle(
+            "-fx-background-image: url('/com/example/Carcel.jpg'); " +
+            "-fx-background-size: cover; " +
+            "-fx-background-position: center center; " +
+            "-fx-background-repeat: no-repeat;"
+        );
 
-    // Maneja el evento de doble clic en la tabla
-    private void manejarClicTabla(MouseEvent event) {
-        if (event.getClickCount() == 2) {
-            ArchivoPDF pdfSeleccionado = table_view.getSelectionModel().getSelectedItem();
-            if (pdfSeleccionado != null) {
-                abrirPDF(pdfSeleccionado);
-            }
-        }
-    }
+        // clip redondeado que recorta la imagen al tamaño del contenedor (responsive)
+        Rectangle clip = new Rectangle();
+        double radius = 40; // ajustar radio de esquinas
+        clip.setArcWidth(radius);
+        clip.setArcHeight(radius);
+        clip.widthProperty().bind(ContenedorImagen.widthProperty());
+        clip.heightProperty().bind(ContenedorImagen.heightProperty());
+        ContenedorImagen.setClip(clip);
 
-    // Abre un archivo PDF con el programa predeterminado del sistema
-    private void abrirPDF(ArchivoPDF pdf) {
-        try {
-            if (pdf.getArchivo().exists()) {
-                java.awt.Desktop.getDesktop().open(pdf.getArchivo());
-                System.out.println("Abriendo PDF: " + pdf.getNombre());
-            } else {
-                mostrarMensaje("El archivo no existe: " + pdf.getNombre(), Alert.AlertType.ERROR);
-            }
-        } catch (Exception e) {
-            mostrarMensaje("Error al abrir el PDF: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
-        }
-    }
-
-    // Recargar la lista de PDFs
-    public void recargarPDFs() {
-        cargarPDFs();
-    }
-
-    // Mostrar mensajes en la interfaz
-    private void mostrarMensaje(String mensaje, Alert.AlertType tipo) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle("Información");
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
-    // Obtener la lista de PDFs
-    public ObservableList<ArchivoPDF> getListaPDFs() {
-        return listaPDFs;
-    }
-
-    // Limpiar el campo de cédula
-    private void limpiarCampo() {
-        TFCedula.clear();
-        TFCedula.setStyle("-fx-border-color: transparent;");
-        TFCedula.requestFocus();
-    }
-
-    // Validar la cédula en tiempo real
-    private void validarCedulaEnTiempoReal() {
-        String cedula = TFCedula.getText().trim();
-        if (cedula.isEmpty()) {
-            return;
-        }
-        if (ingresoController.esCedulaValida(cedula)) {
-            TFCedula.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
-        } else {
-            TFCedula.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        mostrarAlerta("Error al cargar la imagen", e.getMessage(), Alert.AlertType.ERROR);
     }
 }
 
+
+    private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
+}
