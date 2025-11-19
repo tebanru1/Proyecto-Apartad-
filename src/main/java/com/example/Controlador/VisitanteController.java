@@ -1,6 +1,7 @@
 package com.example.Controlador;
 
 import com.example.DAO.VisitanteDAO;
+import com.example.Modelo.Usuario;
 import com.example.Modelo.Visitantes;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,8 +25,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import javax.swing.JLabel;
 
 
 
@@ -239,6 +238,9 @@ public void registrarSalidaVisitante() {
     } catch (Exception e) {
         System.out.println("Error al registrar salida: " + e.toString());
     }
+}
+public interface UsuarioReceptor {
+    void setUsuario(Usuario usuario);
 }
 
 private void limpiarCampos() {

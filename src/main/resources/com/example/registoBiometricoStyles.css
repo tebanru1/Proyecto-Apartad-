@@ -1,0 +1,123 @@
+/* ======================================= */
+/* 1. Paleta de Colores */
+/* ======================================= */
+.root {
+    /* Variables de Color */
+    -color-dark-blue: #003366;
+    -color-medium-blue: #0055A4;
+    -color-light-gray: #F0F0F0;
+    -color-medium-gray: #B0B0B0;
+    -color-white: #FFFFFF;
+    
+    /* Configuración Global */
+    -fx-font-family: 'Arial', sans-serif; /* Tipografía limpia */
+}
+
+/* ======================================= */
+/* 2. Estructura y Fondos */
+/* ======================================= */
+
+.main-background {
+    -fx-background-color: -color-white; /* Fondo principal blanco o muy claro */
+}
+
+.header-bar {
+    -fx-background-color: -color-dark-blue;
+    -fx-padding: 15px 30px;
+}
+
+.header-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-white;
+}
+
+.form-background {
+    -fx-background-color: -color-white;
+}
+
+/* ======================================= */
+/* 3. Tarjetas y Paneles (Clase: card) */
+/* ======================================= */
+.card {
+    -fx-background-color: -color-light-gray; /* Fondo de tarjetas */
+    -fx-background-radius: 12px; /* Esquinas redondeadas */
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.5, 0, 2); /* Sombra suave */
+    -fx-border-color: -color-medium-gray;
+    -fx-border-width: 0.5px;
+    -fx-border-radius: 12px;
+}
+
+/* Paneles de Información (Fecha/Hora) */
+.info-panel {
+    -fx-min-width: 180px;
+    -fx-alignment: center;
+}
+
+.info-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: -color-medium-gray;
+    -fx-font-weight: bold;
+}
+
+.info-textfield {
+    -fx-background-color: -color-white;
+    -fx-text-fill: -color-dark-blue;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px;
+    -fx-border-color: -color-medium-gray;
+    -fx-border-width: 1px;
+}
+
+/* Paneles de Captura Biometrica */
+.capture-panel {
+    -fx-min-width: 350px;
+}
+
+.capture-area {
+    -fx-background-color: -color-white;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 250px;
+    -fx-background-radius: 10px;
+    -fx-border-color: -color-dark-blue;
+    -fx-border-width: 2px;
+    -fx-border-style: dashed; /* Simular área de captura */
+    -fx-padding: 10px;
+    -fx-alignment: center;
+}
+
+.capture-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: -color-dark-blue;
+    -fx-font-weight: bold;
+}
+
+/* Icono/Animación Opcional (Usa una fuente de iconos como FontAwesome o un caracter Unicode grande) */
+.biometric-icon {
+    -fx-font-family: 'Font Awesome 5 Free', 'Arial'; /* Reemplazar si no usas FA */
+    -fx-font-size: 80px;
+    -fx-text-fill: -color-medium-gray;
+    -fx-opacity: 0.5;
+}
+
+/* ======================================= */
+/* 4. Botones */
+/* ======================================= */
+.primary-button {
+    -fx-background-color: -color-dark-blue; /* Azul oscuro */
+    -fx-text-fill: -color-white;
+    -fx-background-radius: 10px; /* Esquinas redondeadas */
+    -fx-padding: 12px 30px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.0, 0, 2); /* Sombra */
+}
+
+.primary-button:hover {
+    -fx-background-color: -color-medium-blue; /* Azul medio en hover */
+}

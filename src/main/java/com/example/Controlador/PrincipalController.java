@@ -1,75 +1,138 @@
 package com.example.Controlador;
 
-
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
+
+import com.example.Controlador.AutorizacionesController.UsuarioReceptor;
+import com.example.Modelo.Usuario;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.stage.Stage;
 
-/**
- * Controlador para el archivo principal.fxml
- * Maneja los botones btnIngreso, btnSalida y el campo TFCedula
- */
 public class PrincipalController implements Initializable {
-    
-    @FXML
-    private Button btnIngreso;
-    
-    @FXML
-    private Button btnSalida;
-    
-    @FXML
-    private Button btnInicio;
 
     @FXML
-    private Button btnCodigo;
+    private Button btnIngreso, btnSalida, btnInicio, btnCodigo, btnAutorizaciones, btnVisitas, btnRegistrar, btnIngroAdmin;
 
-    @FXML
-    private Button btnAutorizaciones;
-   
-    @FXML
-    private Button btnVisitas;
-    
     @FXML
     private TextField TFCedula;
-    
+
     @FXML
     private AnchorPane root;
-    
+
+    private Usuario usuario;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        volverInicio();
-
-        // Configurar eventos de los botones
         configurarEventos();
-        
-       
+        // No cargamos ningún módulo automáticamente aquí
     }
-    
+
     /**
      * Configura los eventos de los botones
      */
     private void configurarEventos() {
-       
-        // Evento del botón de generar código
-        btnCodigo.setOnAction(event -> cargarGenerarCodigo());
-
-        btnAutorizaciones.setOnAction(event->Autorizaciones());
-        
-        // Evento del botón de inicio
-        btnInicio.setOnAction(event -> {
-            volverInicio();});
-       
-        btnVisitas.setOnAction(event -> ModuloVisitas());  
+        btnRegistrar.setOnAction(event -> abrirVentanaRegistro());
+        btnCodigo.setOnAction(event -> cargarModulo("/com/example/generarcodigo.fxml", null));
+        btnAutorizaciones.setOnAction(event -> cargarModulo("/com/example/autorizaciones.fxml", c -> {
+            if (c instanceof UsuarioReceptor receptor) receptor.setUsuario(usuario);
+        }));
+        btnVisitas.setOnAction(event -> cargarModulo("/com/example/visitante.fxml", c -> {
+            if (c instanceof UsuarioReceptor receptor) receptor.setUsuario(usuario);
+        }));
+        btnIngroAdmin.setOnAction(event -> cargarModulo("/com/example/IngresoAdministrativos.fxml", c -> {
+            if (c instanceof UsuarioReceptor receptor) receptor.setUsuario(usuario);
+        }));
+        btnInicio.setOnAction(event -> volverInicio());
     }
-    
+
+    /**
+     * Método genérico para cargar un módulo en el AnchorPane root
+     */
+    private <T> void cargarModulo(String fxmlPath, Consumer<T> configurador) {
+        try {
+            root.getChildren().clear();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent contenido = loader.load();
+            T controller = loader.getController();
+
+            if (configurador != null && controller != null) {
+                configurador.accept(controller);
+            }
+
+            root.getChildren().add(contenido);
+            anclarAlAnchor(contenido);
+
+        } catch (IOException e) {
+            mostrarMensaje("Error al cargar el módulo: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Ancla un nodo a todos los lados del AnchorPane
+     */
+    private void anclarAlAnchor(Parent nodo) {
+        AnchorPane.setTopAnchor(nodo, 0.0);
+        AnchorPane.setBottomAnchor(nodo, 0.0);
+        AnchorPane.setLeftAnchor(nodo, 0.0);
+        AnchorPane.setRightAnchor(nodo, 0.0);
+    }
+
+    /**
+     * Vuelve a la pantalla de inicio
+     */
+    @FXML
+    private void volverInicio() {
+        cargarModulo("/com/example/inicio.fxml", c -> {
+            if (c instanceof InicioController inicioController) {
+                if (usuario != null) {
+                    inicioController.setUsuario(usuario);
+                    inicioController.limpiarCampos();
+                }
+            }
+        });
+    }
+
+    /**
+     * Abre la ventana de registrar usuarios de forma independiente
+     */
+    private void abrirVentanaRegistro() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/registrarUsuario.fxml"));
+            Parent registroRoot = loader.load();
+
+            // Pasar usuario si es necesario
+            Object controller = loader.getController();
+            if (controller instanceof UsuarioReceptor receptor) {
+                receptor.setUsuario(usuario);
+            }
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(registroRoot));
+            stage.setResizable(false);
+            stage.centerOnScreen();
+            stage.setTitle("REGISTRO DE USUARIOS");
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/com/example/Logo_Institucional.png")));
+            stage.show();
+
+        } catch (IOException e) {
+            mostrarMensaje("Error al abrir ventana de registro: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Muestra un mensaje en la interfaz
      */
@@ -80,112 +143,12 @@ public class PrincipalController implements Initializable {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-    
+
     /**
-     * Carga el contenido de generarcodigo.fxml dentro del AnchorPane root
+     * Setter del usuario
      */
-    @FXML
-    private void cargarGenerarCodigo() {
-        try {
-            // Limpiar el contenido actual del root
-            root.getChildren().clear();
-            
-            // Cargar el FXML de generar código
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/generarcodigo.fxml"));
-            Parent contenidoGenerarCodigo = loader.load();
-            
-            // Agregar el contenido al root
-            root.getChildren().add(contenidoGenerarCodigo);
-            
-            // Anclar el contenido al root
-            AnchorPane.setTopAnchor(contenidoGenerarCodigo, 0.0);
-            AnchorPane.setBottomAnchor(contenidoGenerarCodigo, 0.0);
-            AnchorPane.setLeftAnchor(contenidoGenerarCodigo, 0.0);
-            AnchorPane.setRightAnchor(contenidoGenerarCodigo, 0.0);
-            
-        } catch (Exception e) {
-            mostrarMensaje("Error al cargar el generador de códigos: " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-    
-    /**
-     * Vuelve a la pantalla principal
-     */
-   @FXML
-private void volverInicio() {
-    try {
-        // Limpiar el contenido actual del root
-        root.getChildren().clear();
-
-        // Cargar el FXML de inicio
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/inicio.fxml"));
-        AnchorPane V_inicio = loader.load(); // Asegúrate que el FXML raíz es AnchorPane
-
-        // 🔹 Anclar V_inicio a los bordes de root
-        AnchorPane.setTopAnchor(V_inicio, 0.0);
-        AnchorPane.setBottomAnchor(V_inicio, 0.0);
-        AnchorPane.setLeftAnchor(V_inicio, 0.0);
-        AnchorPane.setRightAnchor(V_inicio, 0.0);
-
-        // Agregar V_inicio al root
-        root.getChildren().add(V_inicio);
-
-    } catch (Exception e) {
-        mostrarMensaje("Error al volver al inicio: " + e.getMessage(), Alert.AlertType.ERROR);
-        e.printStackTrace();
-    }
-}
-
-    @FXML
-    private void ModuloVisitas() {
-        try {
-            // Limpiar el contenido actual del root
-            root.getChildren().clear();
-            
-            // Cargar el FXML principal
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/visitante.fxml"));
-            Parent contenidoVisitas = loader.load();
-           
-            // Agregar el contenido al root
-            root.getChildren().add(contenidoVisitas);
-            
-            // Anclar el contenido al root
-            AnchorPane.setTopAnchor(contenidoVisitas, 0.0);
-            AnchorPane.setBottomAnchor(contenidoVisitas, 0.0);
-            AnchorPane.setLeftAnchor(contenidoVisitas, 0.0);
-            AnchorPane.setRightAnchor(contenidoVisitas, 0.0);
-         
-        } catch (Exception e) {
-            mostrarMensaje("Error al cargar el modulo de visitas: " + e.getMessage(), Alert.AlertType.ERROR);
-        e.printStackTrace();
-        System.out.println(e.getMessage());
-        }
-    }
-    
-    private void Autorizaciones() {
-        try {
-            // Limpiar el contenido actual del root
-            root.getChildren().clear();
-            
-            // Cargar el FXML principal
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/autorizaciones.fxml"));
-            Parent contenidoAutorizaciones= loader.load();
-            
-
-            // Agregar el contenido al root
-           
-            
-            // Anclar el contenido al root
-            AnchorPane.setTopAnchor(contenidoAutorizaciones, 0.0);
-            AnchorPane.setBottomAnchor(contenidoAutorizaciones, 0.0);
-            AnchorPane.setLeftAnchor(contenidoAutorizaciones, 0.0);
-            AnchorPane.setRightAnchor(contenidoAutorizaciones, 0.0);
-             root.getChildren().add(contenidoAutorizaciones);
-         
-        } catch (Exception e) {
-            mostrarMensaje("Error al cargar el modulo Autorizaciones: " + e.getMessage(), Alert.AlertType.ERROR);
-        e.printStackTrace();
-        System.out.println(e.getMessage());
-        }
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        volverInicio();
     }
 }

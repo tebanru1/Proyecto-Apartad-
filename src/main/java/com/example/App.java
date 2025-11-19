@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,16 +16,16 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // Cargar FXML
-        Parent root = loadFXML("principal");
+        Parent root = loadFXML("login");
         scene = new Scene(root);
         stage.setScene(scene);
-      
-        
-        stage.setMaximized(true);
+
+        stage.setResizable(false);
 
         stage.centerOnScreen();
 
         stage.setTitle("CPMS APARTADÓ");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/com/example/Logo_Institucional.png")));
         stage.show();
     }
 

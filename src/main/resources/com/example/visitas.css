@@ -1,0 +1,276 @@
+/*
+ * Hoja de Estilos: styles.css
+ * Módulo de Gestión de Visitas - INPEC
+ * Diseño: Moderno, Minimalista, Administrativo (TABLA ACTUALIZADA)
+ */
+
+/* ====================================
+ * Estilos Generales y del Contenedor
+ * ==================================== */
+
+.root {
+    -fx-font-family: "Roboto", "Segoe UI", Arial, sans-serif;
+    -fx-base: #f7f9fc; /* Fondo claro general */
+    -fx-background-color: -fx-base;
+}
+
+.main-content-vbox {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0.1, 0, 0); /* Sombra suave y amplia */
+}
+
+/* ====================================
+ * Encabezado y Tarjetas (Dashboard)
+ * ==================================== */
+
+.header-bar {
+    -fx-alignment: center-left;
+    -fx-padding: 0 0 10 0;
+    -fx-spacing: 25;
+}
+
+.header-icon {
+    -fx-font-size: 32px;
+    -fx-text-fill: #1a237e; /* Azul Marino */
+    -fx-font-family: "Font Awesome 5 Free", "Segoe UI Symbol";
+}
+
+.header-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #333333;
+}
+
+/* Estilo para el campo de búsqueda */
+.search-field {
+    -fx-background-color: #f0f4f8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10px 15px;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #9e9e9e;
+}
+
+.search-field:focused {
+    -fx-border-color: #42a5f5;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(66, 165, 245, 0.2), 5, 0.0, 0, 0);
+}
+
+/* Tarjetas (Dashboard) */
+.dashboard-card {
+    -fx-background-radius: 12; /* Bordes más redondeados */
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0.1, 0, 4); /* Sombra más fuerte y elevada */
+    -fx-spacing: 5;
+}
+
+/* 🔵 Tarjeta Principal: Visitantes Hoy */
+.card-primary {
+    -fx-background-color: white; /* Degradado moderno */
+    -fx-border-color: #536dfe; /* Borde sutil del color de acento */
+    -fx-border-width: 0 0 4 0; /* Línea de color de acento abajo */
+}
+
+/* 🟡 Tarjeta Secundaria: Pendientes de Salida */
+.card-secondary {
+    -fx-background-color: white; /* Fondo blanco para contraste */
+    -fx-border-color: #ffc107; /* Borde de alerta */
+    -fx-border-width: 0 0 4 0;
+}
+
+.card-primary .card-label, .card-primary .card-value {
+    -fx-text-fill: #333333;
+}
+
+.card-secondary .card-label, .card-secondary .card-value {
+    -fx-text-fill: #333333; /* Texto oscuro sobre fondo claro */
+}
+
+.card-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-opacity: 0.8;
+    -fx-letter-spacing: 1px; /* Espaciado para mejorar lectura */
+}
+
+.card-value {
+    -fx-font-size: 24px; /* Tamaño grande para el número */
+    -fx-font-weight: 800; /* Extra-Bold */
+    -fx-padding: 5 0 0 0;
+}
+.card-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-opacity: 0.8;
+}
+
+.card-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: 700;
+}
+
+
+/* ====================================
+ * Formulario y Controles
+ * ==================================== */
+
+.form-vbox {
+    -fx-background-color: #f7f9fc;
+    -fx-padding: 25px;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 0 10px 0;
+    -fx-border-color: transparent transparent #e0e0e0 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.grid-pane Label {
+    -fx-font-weight: 500;
+    -fx-text-fill: #555555;
+}
+
+.form-input, .form-combo {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10px 12px;
+    -fx-prompt-text-fill: #aaaaaa;
+}
+
+.form-input:focused, .form-combo:focused {
+    -fx-border-color: #42a5f5;
+    -fx-background-color: white;
+}
+
+/* Botones de acción */
+.btn-action-primary {
+    -fx-background-color: #42a5f5;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.btn-action-primary:hover {
+    -fx-background-color: #1e88e5;
+}
+
+.btn-action-secondary {
+    -fx-background-color: #78909c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+
+.btn-action-secondary:hover {
+    -fx-background-color: #546e7a;
+}
+
+/* ====================================
+ * Tabla de Visitantes (CUSTOM STYLES APPLIED)
+ * ==================================== */
+
+/* Aseguramos que la clase general de la tabla aplique los estilos */
+.custom-table {
+    /* Aquí se aplica la clase general table-view para la tabla fx:id="tablaVisitantes" */
+}
+
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d9d9d9;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to bottom, #1f3c88, #002C6E); /* Degradado azul oscuro */
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 5 0;
+}
+
+.table-view .column-header .label,
+.table-view .nested-column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #1f3c88;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Scrollbars */
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-width: 12px;
+    -fx-pref-height: 12px;
+}
+
+.table-view .scroll-bar .track {
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 6px;
+}
+
+.table-view .scroll-bar .thumb {
+    -fx-background-color: linear-gradient(to bottom, #1f3c88, #002C6E);
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 2, 0.5, 0, 1);
+}
+
+.table-view .scroll-bar .thumb:hover {
+    -fx-background-color: linear-gradient(to bottom, #2e50b3, #003580);
+}
+
+.table-view .scroll-bar .thumb:pressed {
+    -fx-background-color: linear-gradient(to bottom, #003580, #001f4d);
+}
+
+.table-view .corner,
+.table-view .filler {
+    -fx-background-color: transparent;
+}
+
+/* Filas */
+.table-row-cell {
+    -fx-background-color: #ffffff;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f5f7fa; /* Rayado suave */
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #e8f0ff; /* Azul suave para hover */
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #c2d8ff; /* Azul para selección */
+    -fx-text-fill: #000000;
+}
+
+/* Celdas */
+.table-cell {
+    -fx-padding: 6 10;
+    -fx-font-size: 13px;
+    -fx-text-fill: #333333;
+}

@@ -2,6 +2,7 @@ package com.example.Controlador;
 
 import com.example.DAO.AutorizacionesDAO;
 import com.example.Modelo.Autorizaciones;
+import com.example.Modelo.Usuario;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -74,6 +75,9 @@ public class AutorizacionesController implements Initializable {
         configurarEventoTabla();
         cargarAutorizacionesDesdeBaseDeDatos();
     }
+        public interface UsuarioReceptor {
+            void setUsuario(Usuario usuario);
+        }
 
     private void configurarEventos() {
         btncargarArchivo.setOnAction(event -> cargarArchivo((Stage) btncargarArchivo.getScene().getWindow()));

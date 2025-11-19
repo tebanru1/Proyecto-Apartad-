@@ -1,0 +1,92 @@
+/* Importación de Fuente (Opcional, si no está instalada localmente, usará la alternativa) */
+/* En un proyecto real, se debe asegurar que la fuente esté disponible para JavaFX, 
+   o usar una fuente estándar de la plataforma como 'Segoe UI', 'Roboto' o 'System'. */
+.root {
+    -fx-font-family: "Segoe UI", "Poppins", sans-serif;
+}
+
+/* 1. Estilo del Panel Raíz (Fondo con Degradado Institucional) */
+#root-pane {
+    /* Degradado lineal de arriba a abajo: Azul Oscuro (#003366) a un azul medio (#0066CC) */
+    -fx-background-color: linear-gradient(to bottom, #003366, #0066CC);
+}
+
+/* 2. Contenedor del Formulario de Login (Centrado) */
+#login-container {
+    /* Fondo Blanco para el formulario */
+    -fx-background-color: #FFFFFF;
+    /* Bordes Redondeados */
+    -fx-border-radius: 15px;
+    -fx-background-radius: 15px;
+    /* Efecto de Sombra (Moderno y sutil) */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 30, 0.5, 0, 5);
+}
+
+/* 3. Título Principal */
+#titulo-login {
+    -fx-text-fill: #003366; /* Azul Oscuro Institucional */
+}
+
+/* 4. Estilo de Etiquetas de Campo */
+.label-campo {
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+}
+
+/* 5. Estilo de Campos de Texto y Contraseña (Modernos) */
+.text-field-moderno {
+    -fx-background-color: #F0F0F0; /* Fondo Gris Claro */
+    -fx-border-color: #CCCCCC;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 15px;
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #999999;
+    -fx-max-width: 300px;
+}
+.text-field-moderno:focused {
+    -fx-border-color: #004488; /* Color de enfoque corporativo */
+    -fx-effect: dropshadow(gaussian, #004488, 5, 0.0, 0, 0);
+}
+
+/* 6. Botón Principal "Iniciar Sesión" */
+.btn-primary {
+    -fx-background-color: #004488; /* Azul Corporativo */
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-pref-width: 300px; /* Ancho para que coincida con los campos */
+}
+
+/* Efecto Hover del Botón */
+.btn-primary:hover {
+    -fx-background-color: #0055AA; /* Tono un poco más claro al pasar el ratón */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 0, 0);
+}
+
+/* 7. Mensaje de Error */
+.error-message {
+    -fx-text-fill: #CC0000; /* Rojo vivo para error */
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-max-width: 300px;
+}
+
+/* 8. Texto Inferior de Copyright */
+#copyright-text {
+    -fx-text-fill: white;
+    -fx-opacity: 0.7;
+    -fx-font-size: 12px;
+}
+.context-menu {
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+.MensajeError {
+    -fx-text-fill: #e74c3c; /* Rojo intenso */
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}

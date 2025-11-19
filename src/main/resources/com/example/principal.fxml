@@ -13,13 +13,30 @@
    <children>
       <VBox fx:id="panel_lateral" alignment="CENTER" styleClass="panel_lateral" stylesheets="@styles.css">
          <children>
+            <AnchorPane maxHeight="100.0" VBox.vgrow="ALWAYS" />
             <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
                <image>
                   <Image url="@Logo_Institucional.png" />
                </image>
             </ImageView>
-            <AnchorPane VBox.vgrow="ALWAYS" />
+            <AnchorPane maxHeight="100.0" VBox.vgrow="ALWAYS" />
             <Button fx:id="btnInicio" mnemonicParsing="false" prefHeight="50.0" prefWidth="330.0" styleClass="btn_Menu" stylesheets="@styles.css" text="INICIO" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="btnRegistrar" layoutX="10.0" layoutY="355.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="330.0" styleClass="btn_Menu" stylesheets="@styles.css" text="REGISTRAR USUARIO" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="btnIngroAdmin" layoutX="10.0" layoutY="255.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="330.0" styleClass="btn_Menu" stylesheets="@styles.css" text="INGRESOS ADMINISTRATIVOS" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -43,7 +60,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="btnVisitas" mnemonicParsing="false" onMouseClicked="#ModuloVisitas" prefHeight="50.0" prefWidth="330.0" styleClass="btn_Menu" stylesheets="@styles.css" text="VISITAS" textFill="WHITE">
+            <Button fx:id="btnVisitas" mnemonicParsing="false" prefHeight="50.0" prefWidth="330.0" styleClass="btn_Menu" stylesheets="@styles.css" text="VISITAS" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
