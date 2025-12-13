@@ -1,9 +1,12 @@
 package com.example.DAO;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +86,7 @@ public static ingresoAdministrativos buscarUltimoIngresoPendiente(String cedula)
         FROM RegistrosAsistencia r
         INNER JOIN Administrativos a ON r.administrativo_id = a.id
         WHERE a.cedula = ? AND r.horaSalida IS NULL
-        ORDER BY r.fecha DESC, r.horaIngreso A
+        ORDER BY r.fecha DESC, r.horaIngreso DESC
         LIMIT 1
     """;
 
@@ -280,6 +283,76 @@ public List<ingresoAdministrativos> listarTodos() throws Exception {
     return lista;
 }
 
+public int contarAdmin() throws Exception {
+    int total = 0;
+    String sql = "SELECT COUNT(*) FROM RegistrosAsistencia WHERE fecha = CURRENT_DATE AND horaSalida IS NULL";
 
+    try (Connection con = cn.conectar();
+         PreparedStatement pstmt = con.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+        if (rs.next()) {
+            total = rs.getInt(1);
+        }
     }
+
+    return total;
+}
+public List<ingresoAdministrativos> FiltrarAvanzado(LocalDate fecha, String documento, String nombre) throws Exception {
+    StringBuilder sql = new StringBuilder("""
+        SELECT r.id AS registroId, r.administrativo_id, a.cedula, a.nombre, a.apellido, a.cargo, a.fotoFuncionario,
+               r.fecha, r.horaIngreso, r.horaSalida, r.huellaIngreso, r.huellaSalida, r.usuario
+        FROM RegistrosAsistencia r
+        INNER JOIN Administrativos a ON r.administrativo_id = a.id
+        WHERE 1=1
+    """);
+
+    List<Object> parametros = new ArrayList<>();
+
+    if (fecha != null) {
+        sql.append(" AND r.fecha = ?");
+        parametros.add(Date.valueOf(fecha));
+    }
+    if (documento != null && !documento.isEmpty()) {
+        sql.append(" AND a.cedula LIKE ?");
+        parametros.add("%" + documento + "%");
+    }
+    if (nombre != null && !nombre.isEmpty()) {
+        sql.append(" AND LOWER(a.nombre) LIKE ?");
+        parametros.add("%" + nombre.toLowerCase() + "%");
+    }
+    sql.append(" ORDER BY r.fecha DESC, r.horaIngreso DESC ");
+    List<ingresoAdministrativos> lista = new ArrayList<>();
+
+    try (Connection con = cn.conectar();
+         PreparedStatement pst = con.prepareStatement(sql.toString())) {
+
+        for (int i = 0; i < parametros.size(); i++) {
+            pst.setObject(i + 1, parametros.get(i));
+        }
+
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                ingresoAdministrativos a = new ingresoAdministrativos(
+                        rs.getString("cedula"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("cargo"),
+                        rs.getDate("fecha"),
+                        rs.getTime("horaIngreso"),
+                        rs.getTime("horaSalida"),
+                        rs.getBytes("huellaIngreso"),
+                        rs.getBytes("huellaSalida"),
+                        rs.getBytes("fotoFuncionario"),
+                        rs.getString("usuario")
+                );
+                lista.add(a);
+            }
+        }
+    }
+
+    return lista;
+}
+
+}
 

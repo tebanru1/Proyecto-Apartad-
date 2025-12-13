@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-import com.example.Controlador.AutorizacionesController.UsuarioReceptor;
 import com.example.Modelo.Usuario;
 
 import javafx.fxml.FXML;
@@ -36,7 +35,6 @@ public class PrincipalController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configurarEventos();
-        // No cargamos ningún módulo automáticamente aquí
     }
 
     /**
@@ -44,17 +42,13 @@ public class PrincipalController implements Initializable {
      */
     private void configurarEventos() {
         btnRegistrar.setOnAction(event -> abrirVentanaRegistro());
-        btnCodigo.setOnAction(event -> cargarModulo("/com/example/generarcodigo.fxml", null));
-        btnAutorizaciones.setOnAction(event -> cargarModulo("/com/example/autorizaciones.fxml", c -> {
-            if (c instanceof UsuarioReceptor receptor) receptor.setUsuario(usuario);
-        }));
-        btnVisitas.setOnAction(event -> cargarModulo("/com/example/visitante.fxml", c -> {
-            if (c instanceof UsuarioReceptor receptor) receptor.setUsuario(usuario);
-        }));
-        btnIngroAdmin.setOnAction(event -> cargarModulo("/com/example/IngresoAdministrativos.fxml", c -> {
-            if (c instanceof UsuarioReceptor receptor) receptor.setUsuario(usuario);
-        }));
-        btnInicio.setOnAction(event -> volverInicio());
+
+        btnCodigo.setOnAction(event -> cargarModulo("/com/example/CARNET2.fxml", c -> pasarUsuario(c)));
+        btnAutorizaciones.setOnAction(event -> cargarModulo("/com/example/autorizaciones.fxml", c -> pasarUsuario(c)));
+        btnVisitas.setOnAction(event -> cargarModulo("/com/example/visitante.fxml", c -> pasarUsuario(c)));
+        btnIngroAdmin.setOnAction(event -> cargarModulo("/com/example/IngresoAdministrativos.fxml", c -> pasarUsuario(c)));
+        btnInicio.setOnAction(event -> cargarModulo("/com/example/inicio.fxml", c -> pasarUsuario(c)));
+
     }
 
     /**
@@ -67,6 +61,7 @@ public class PrincipalController implements Initializable {
             Parent contenido = loader.load();
             T controller = loader.getController();
 
+            // Pasar el usuario si el controlador implementa UsuarioReceptor
             if (configurador != null && controller != null) {
                 configurador.accept(controller);
             }
@@ -81,6 +76,15 @@ public class PrincipalController implements Initializable {
     }
 
     /**
+     * Método centralizado para pasar el usuario a cualquier controlador que implemente UsuarioReceptor
+     */
+    private <T> void pasarUsuario(T controller) {
+        if (controller instanceof com.example.Controlador.UsuarioReceptor receptor) {
+            receptor.setUsuario(usuario);
+        }
+    }
+
+    /**
      * Ancla un nodo a todos los lados del AnchorPane
      */
     private void anclarAlAnchor(Parent nodo) {
@@ -91,21 +95,6 @@ public class PrincipalController implements Initializable {
     }
 
     /**
-     * Vuelve a la pantalla de inicio
-     */
-    @FXML
-    private void volverInicio() {
-        cargarModulo("/com/example/inicio.fxml", c -> {
-            if (c instanceof InicioController inicioController) {
-                if (usuario != null) {
-                    inicioController.setUsuario(usuario);
-                    inicioController.limpiarCampos();
-                }
-            }
-        });
-    }
-
-    /**
      * Abre la ventana de registrar usuarios de forma independiente
      */
     private void abrirVentanaRegistro() {
@@ -113,11 +102,8 @@ public class PrincipalController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/registrarUsuario.fxml"));
             Parent registroRoot = loader.load();
 
-            // Pasar usuario si es necesario
             Object controller = loader.getController();
-            if (controller instanceof UsuarioReceptor receptor) {
-                receptor.setUsuario(usuario);
-            }
+            pasarUsuario(controller);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(registroRoot));
@@ -149,6 +135,7 @@ public class PrincipalController implements Initializable {
      */
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-        volverInicio();
+        // Cargar inicio inmediatamente al recibir usuario
+        cargarModulo("/com/example/inicio.fxml", c -> pasarUsuario(c));
     }
 }

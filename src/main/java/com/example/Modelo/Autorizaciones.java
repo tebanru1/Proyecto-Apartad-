@@ -10,12 +10,13 @@ public class Autorizaciones {
     private Date fechaInicio;
     private Date fechaTerminacion;
     private String fechaGeneracion;
-    private byte[] PDFs; // Para almacenar el PDF como BLOB
+    private byte[] PDFs;
+    private String estado;
 
     public Autorizaciones() {}
 
     public Autorizaciones(int id,String descripcion, String area, String tipo, Date fechaInicio,
-                          Date fechaTerminacion, String fechaGeneracion, byte[] PDFs) {
+                          Date fechaTerminacion, String fechaGeneracion, byte[] PDFs,String estado) {
         this.id = id;
         this.descripcion = descripcion;
         this.area = area;
@@ -24,6 +25,7 @@ public class Autorizaciones {
         this.fechaTerminacion = fechaTerminacion;
         this.fechaGeneracion = fechaGeneracion;
         this.PDFs = PDFs; 
+        this.estado=estado;
     }
     public int getId() {
         return id;
@@ -85,5 +87,11 @@ public class Autorizaciones {
 
     public void setPDFs(byte[] PDFs) {
         this.PDFs = PDFs; 
+    }
+    public void setEstado(String estado){
+        this.estado=estado;
+    }
+    public String getEstado(){
+        return estado;
     }
 }

@@ -135,7 +135,11 @@
     -fx-prompt-text-fill: #a0a0a0;
     -fx-font-size: 14px;
 }
-
+.date-picker-popup .month-year-pane .label .date-picker-input {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;     /* Tamaño de letra opcional */
+    -fx-font-weight: bold;   /* Negrita opcional */
+}
 .text-input:focused, .date-picker-input:focused, .combo-box-base:focused {
     -fx-border-color: #2196f3; /* Azul primario al enfocar */
 }

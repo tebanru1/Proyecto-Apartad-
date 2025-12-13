@@ -63,7 +63,8 @@ public class AutorizacionesDAO {
                         rs.getDate("fechaInicio"),
                         rs.getDate("fechaTerminacion"),
                         rs.getString("fechaGeneracion"),
-                        rs.getBytes("PDFs")
+                        rs.getBytes("PDFs"),
+                        rs.getString("estado")
                 );
                 lista.add(a);
             }
@@ -91,7 +92,8 @@ public class AutorizacionesDAO {
                             rs.getDate("fechaInicio"),
                             rs.getDate("fechaTerminacion"),
                             rs.getString("fechaGeneracion"),
-                            rs.getBytes("PDFs")
+                            rs.getBytes("PDFs"),
+                            rs.getString("estado")
                     );
                     lista.add(a);
                 }
@@ -112,4 +114,69 @@ public class AutorizacionesDAO {
         }
         return null;
     }
+
+    public int AutorizacionesIngresadas() throws Exception {
+    int total = 0;
+    String sql = "SELECT COUNT(*) FROM Autorizaciones";
+
+    try (Connection con = conexion.conectar();
+         PreparedStatement pstmt = con.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+        if (rs.next()) {
+            total = rs.getInt(1);
+        }
+    }
+
+    return total;
+    }
+    public int AutorizacionesVencidas() throws Exception {
+    int total = 0;
+    String sql = "SELECT COUNT(*) FROM Autorizaciones WHERE fechaTerminacion < CURRENT_DATE AND estado IS NULL";
+
+    try (Connection con = conexion.conectar();
+         PreparedStatement pstmt = con.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+        if (rs.next()) {
+            total = rs.getInt(1);
+        }
+    }
+
+    return total;
+}
+  public int AutorizacionesRecibidas() throws Exception {
+    int total = 0;
+    String sql = "SELECT COUNT(*) FROM Autorizaciones WHERE estado= 'INGRESADA'";
+
+    try (Connection con = conexion.conectar();
+         PreparedStatement pstmt = con.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+        if (rs.next()) {
+            total = rs.getInt(1);
+        }
+    }
+
+    return total;
+}
+
+public boolean actualizarEstadoAutorizacion(int idAutorizacion, String nuevoEstado) {
+    String sql = "UPDATE Autorizaciones SET estado = ? WHERE id = ? AND estado IS NULL";
+    // Retorna true si se actualizó, false si no se hizo nada
+
+    try (Connection con = conexion.conectar();
+         PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+        pstmt.setString(1, nuevoEstado);       // El estado que queremos asignar
+        pstmt.setInt(2, idAutorizacion);       // ID de la autorización
+
+        int filas = pstmt.executeUpdate();
+        return filas > 0; // Si filas > 0, se actualizó
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
 }

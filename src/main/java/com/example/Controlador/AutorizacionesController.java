@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class AutorizacionesController implements Initializable {
-
+    @FXML Label lbIngresadas,lblTotalAutorizaciones,lblVencidas;
     @FXML
     private TextField txtDescripcion;
     @FXML
@@ -32,13 +32,7 @@ public class AutorizacionesController implements Initializable {
     @FXML
     private ComboBox<String> filtrar; 
     @FXML
-    private Button btncargarArchivo;
-    @FXML
-    private Button btnDescargarArchivo;
-    @FXML
-    private Button btnEliminarArchivo;
-    @FXML
-    private Button btnSubirBD;   // <<--- Nuevo botón para subir a la BD
+    private Button btnSubirBD,btnEliminarArchivo,btnDescargarArchivo,btncargarArchivo,btnAutorizacionIngresada; 
     @FXML
     private TableView<Autorizaciones> tablaAutorizaciones;
     @FXML
@@ -54,7 +48,7 @@ public class AutorizacionesController implements Initializable {
     @FXML
     private TableColumn<Autorizaciones, String> columnaFechaTerminacion;
     @FXML
-    private TableColumn<Autorizaciones, String> columnaFechaGeneracion;
+    private TableColumn<Autorizaciones, String> columnaFechaGeneracion,columnaEstado;
     @FXML
     private DatePicker fechainicio;
     @FXML
@@ -62,6 +56,7 @@ public class AutorizacionesController implements Initializable {
 
     private AutorizacionesDAO autorizacionesDAO;
     private ObservableList<Autorizaciones> listaAutorizaciones;
+    private int idSeleccionado; 
 
     // <<--- Variable para almacenar el PDF seleccionado
     private File PDF;
@@ -74,6 +69,9 @@ public class AutorizacionesController implements Initializable {
         configurarTablaAutorizaciones();
         configurarEventoTabla();
         cargarAutorizacionesDesdeBaseDeDatos();
+        AutorizacionesIngresadas();
+        AutorizacionesVencidas();
+        AutorizacionesRecibidas();
     }
         public interface UsuarioReceptor {
             void setUsuario(Usuario usuario);
@@ -93,7 +91,7 @@ private void configurarEventoTabla() {
             TIPO.setValue(newSelection.getTipo());
             fechainicio.setValue(newSelection.getFechaInicio().toLocalDate());
             fechaterminacion.setValue(newSelection.getFechaTerminacion().toLocalDate());
-
+            idSeleccionado=newSelection.getId();
             archivonombre.setText("Archivo cargado"); 
         }
     });
@@ -196,6 +194,8 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getFechaTerminacion().toString()));
         columnaFechaGeneracion.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getFechaGeneracion()));
+        columnaEstado.setCellValueFactory(cellData->
+             new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEstado()));
                 listaAutorizaciones=FXCollections.observableArrayList();
                 tablaAutorizaciones.setItems(listaAutorizaciones);
 
@@ -219,7 +219,7 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
             byte[] PDFs = java.nio.file.Files.readAllBytes(PDF.toPath());
 
             Autorizaciones autorizaciones = new Autorizaciones(id, descripcion, area, tipo, fechaInicio,
-                    fechaTerminacion, fechaGeneracion, PDFs);
+                    fechaTerminacion, fechaGeneracion, PDFs,null);
 
             int nuevoId = autorizacionesDAO.guardar(autorizaciones);
             if (nuevoId > 0) {
@@ -277,5 +277,37 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
         } catch (Exception e) {
             System.out.println("Error al cargar autorizaciones: " + e.getMessage());
         }
-    }   
+    }  
+    private void AutorizacionesIngresadas(){
+        try {
+            int total=autorizacionesDAO.AutorizacionesIngresadas();
+            lblTotalAutorizaciones.setText(String.valueOf(total));
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    } 
+       private void AutorizacionesVencidas(){
+        try {
+            int total=autorizacionesDAO.AutorizacionesVencidas();
+            lblVencidas.setText(String.valueOf(total));
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }  
+     private void AutorizacionesRecibidas(){
+        try {
+            int total=autorizacionesDAO.AutorizacionesRecibidas();
+            lbIngresadas.setText(String.valueOf(total));
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    } 
+@FXML
+private void ActualizarEstado() {
+
+    String nuevoEstado = "INGRESADA"; // Estado que deseas asignar
+
+    boolean actualizado=autorizacionesDAO.actualizarEstadoAutorizacion(idSeleccionado, nuevoEstado);
+
+}
 }

@@ -234,3 +234,29 @@
     -fx-font-size: 13px;
     -fx-text-fill: #333333;
 }
+.date-picker-input {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-color: #e0e0e0;
+    -fx-padding: 8px 5px;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-font-size: 14px;
+}
+.date-picker-popup .month-year-pane {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;     /* Tamaño de letra opcional */
+    -fx-font-weight: bold;   /* Negrita opcional */
+}
+
+.date-picker-input:focused {
+    -fx-border-color: #2196f3; /* Azul primario al enfocar */
+}
+.combo-box-base {
+    -fx-background-color: white;
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-color: #e0e0e0;
+    -fx-padding: 0;
+}
+.combo-box-base .arrow-button {
+    -fx-background-color: transparent;
+}

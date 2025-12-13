@@ -47,14 +47,14 @@
                      <children>
                         <Label styleClass="card-icon-placeholder" text="✅" />
                         <Label styleClass="card-label" text="Ingresadas" />
-                        <Label fx:id="lblAprobadas" styleClass="card-number" text="0" />
+                        <Label fx:id="lbIngresadas" styleClass="card-number" text="0" />
                      </children>
                   </VBox>
                   <VBox alignment="CENTER" styleClass="stat-card, rechazada">
                      <children>
                         <Label styleClass="card-icon-placeholder" text="❌" />
                         <Label styleClass="card-label" text="Vencidas" />
-                        <Label fx:id="lblRechazadas" styleClass="card-number" text="0" />
+                        <Label fx:id="lblVencidas" styleClass="card-number" text="0" />
                      </children>
                   </VBox>
                </children>
@@ -102,12 +102,13 @@
 
             </VBox>
             
-            <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <VBox alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                
-               <HBox alignment="CENTER_LEFT" styleClass="search-bar">
+               <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="search-bar">
                   <Label styleClass="search-icon-placeholder" text="🔍" />
                   <TextField fx:id="txtGlobalSearch" promptText="Buscar en todas las autorizaciones..." styleClass="search-input" HBox.hgrow="ALWAYS" />
                </HBox>
+               <Button fx:id="btnAutorizacionIngresada" mnemonicParsing="false" onAction="#ActualizarEstado" text="AUTORIZACION INGRESADA" />
                
                <TableView fx:id="tablaAutorizaciones" styleClass="custom-table" VBox.vgrow="ALWAYS">
                   <columns>

@@ -172,34 +172,64 @@
                             <padding><Insets bottom="15" left="15" right="15" top="15" /></padding>
                             <Label styleClass="titulo-seccion-card-mini" text="ESTADÍSTICAS DEL DÍA" />
                             <VBox spacing="10">
-                                <HBox spacing="15" styleClass="stat-card, stat-visitantes">
-                                    <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
-                                        <image><Image url="@silueta-de-multiples-usuarios.png" /></image>
-                                    </ImageView>
+                                <HBox alignment="CENTER" spacing="15" styleClass="stat-card, stat-visitantes">
+                           <VBox alignment="CENTER" maxWidth="100.0">
+                              <children>
+                                          <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
+                                              <image>
+                                       <Image url="@silueta-de-multiples-usuarios.png" />
+                                    </image>
+                                          </ImageView>
+                              </children>
+                           </VBox>
                                     <VBox alignment="CENTER_LEFT">
-                                        <Label styleClass="stat-label" text="Visitantes Hoy" />
-                                        <Label fx:id="visitasH" styleClass="stat-valor" text="0" />
+                                        <Label styleClass="stat-label" text="Visitantes Presentes" />
                                     </VBox>
+                           <VBox alignment="CENTER" maxWidth="100.0">
+                              <children>
+                                           <Label fx:id="visitasH" styleClass="stat-valor" text="0" />
+                              </children>
+                           </VBox>
                                 </HBox>
 
-                                <HBox spacing="15" styleClass="stat-card, stat-admin">
-                                    <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
-                                        <image><Image url="@lider.png" /></image>
-                                    </ImageView>
+                                <HBox alignment="CENTER" spacing="15" styleClass="stat-card, stat-admin">
+                           <VBox alignment="CENTER" maxWidth="100.0">
+                              <children>
+                                          <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
+                                              <image>
+                                       <Image url="@lider.png" />
+                                    </image>
+                                          </ImageView>
+                              </children>
+                           </VBox>
                                     <VBox alignment="CENTER_LEFT">
-                                        <Label styleClass="stat-label" text="Admin. Presentes" />
-                                        <Label styleClass="stat-valor" text="0" />
+                                        <Label prefWidth="110.0" styleClass="stat-label" text="Admin. Presentes" />
                                     </VBox>
+                           <VBox alignment="CENTER" maxWidth="100.0">
+                              <children>
+                                           <Label fx:id="AdminHoy" styleClass="stat-valor" text="0" />
+                              </children>
+                           </VBox>
                                 </HBox>
 
-                                <HBox spacing="15" styleClass="stat-card, stat-salidas">
-                                    <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
-                                        <image><Image url="@salida.png" /></image>
-                                    </ImageView>
+                                <HBox alignment="CENTER" spacing="15" styleClass="stat-card, stat-salidas">
+                           <VBox alignment="CENTER" maxWidth="100.0">
+                              <children>
+                                          <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
+                                              <image>
+                                       <Image url="@salida.png" />
+                                    </image>
+                                          </ImageView>
+                              </children>
+                           </VBox>
                                     <VBox alignment="CENTER_LEFT">
-                                        <Label styleClass="stat-label" text="Salidas Pendientes" />
-                                        <Label styleClass="stat-valor" text="0" />
+                                        <Label prefWidth="110.0" styleClass="stat-label" text="Salidas Pendientes" VBox.vgrow="ALWAYS" />
                                     </VBox>
+                           <VBox alignment="CENTER" maxWidth="100.0">
+                              <children>
+                                           <Label fx:id="salidasPendietes" styleClass="stat-valor" text="0" />
+                              </children>
+                           </VBox>
                                 </HBox>
                             </VBox>
                         </VBox>

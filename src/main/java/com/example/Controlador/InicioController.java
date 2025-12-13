@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
 import com.example.DAO.AutorizacionesDAO;
 import com.example.DAO.IngresosAdministrativosDAO;
 import com.example.DAO.VisitanteDAO;
@@ -51,7 +50,7 @@ import com.example.Modelo.ingresoAdministrativos;
 
 
 
-public class InicioController implements Initializable {
+public class InicioController implements Initializable, UsuarioReceptor {
 
     @FXML
     private AnchorPane ContenedorAutorizaciones,ContenedorImagen;
@@ -64,7 +63,7 @@ public class InicioController implements Initializable {
     @FXML TextField TFcargo;
     @FXML TextField TFcedula;
     @FXML Button BtnSubirFoto;
-    @FXML Label txtnombre;
+    @FXML Label txtnombre, AdminHoy,salidasPendietes;
     @FXML Label txtgrado;
     @FXML Button btnregistrar;
     @FXML Button btnRecargar;
@@ -90,6 +89,8 @@ public class InicioController implements Initializable {
         mostrarInfoUsuario();
         cargarIngresosDelDia();
         iniciarActualizacionAutomatica();
+        salidasPendietes();
+        AdminLaborando();
     }
 private void configurarEventos() {
     BtnSubirFoto.setOnAction(event -> CargarImagenPerfil());
@@ -143,6 +144,7 @@ private void configurarEventosTextField() {
         aplicarTextoLimpioMayus.accept(TFcargo, textoLimpio);
     });
 }
+@Override
  public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
         mostrarInfoUsuario();
@@ -410,8 +412,8 @@ private void cargarimagen() {
 
 private void actualizarVisitasHoy(){
 try {
-    int visitasHoy = visitanteDAO.contarVisitasHoy();
-    visitasH.setText(String.valueOf(visitasHoy));
+    int visitasPresente = visitanteDAO.VisitasFaltante();
+    visitasH.setText(String.valueOf(visitasPresente));
 } catch (Exception e) {
     e.printStackTrace();
     mostrarAlerta("Error al actualizar visitas", e.getMessage(), Alert.AlertType.ERROR);
@@ -640,10 +642,35 @@ private void RegistroBiometrico() {
 }
 public void iniciarActualizacionAutomatica() {
     Timeline timeline = new Timeline(
-        new KeyFrame(Duration.seconds(10), event -> cargarIngresosDelDia()) // se actualiza cada 10 segundos
+        new KeyFrame(Duration.seconds(2), event -> cargarIngresosDelDia()),
+        new KeyFrame(Duration.seconds(2), event -> actualizarVisitasHoy()),
+        new KeyFrame(Duration.seconds(1), event -> AdminLaborando()),
+        new KeyFrame(Duration.seconds(2), event -> salidasPendietes())
     );
-    timeline.setCycleCount(Timeline.INDEFINITE); // repetir indefinidamente
+    timeline.setCycleCount(Timeline.INDEFINITE); 
     timeline.play();
+}
+private void AdminLaborando(){
+    try {
+        int AdminL=IngresosAdministrativosDAO.contarAdmin();
+        AdminHoy.setText(String.valueOf(AdminL));
+    } catch (Exception e) {
+        System.out.println(e.toString());
+    }
+}
+
+private void salidasPendietes(){
+    try {
+        VisitanteDAO VisitanteDAO=new VisitanteDAO();
+
+        int total1=IngresosAdministrativosDAO.contarAdmin();
+        int total2=VisitanteDAO.VisitasFaltante();
+        int PendientesSalida=total1+total2;
+        salidasPendietes.setText(String.valueOf(PendientesSalida));
+        
+    } catch (Exception e) {
+        System.out.println(e.toString());
+    }
 }
 
 }
