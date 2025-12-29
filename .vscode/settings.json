@@ -1,5 +1,5 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.configuration.updateBuildConfiguration": "disabled",
     "java.format.settings.url": ".vscode/java-formatter.xml",
     "css.lint.vendorPrefix": "ignore",
     "css.lint.unknownProperties": "ignore"

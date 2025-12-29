@@ -29,7 +29,7 @@ public class LoginDAO {
         }
     }
     public Usuario obtenerDatosUsuario(String usuario) {
-    String sql = "SELECT nombre, apellido, grado, rol, usuario FROM usuarios WHERE usuario = ?";
+    String sql = "SELECT id, nombre, apellido, grado, rol, usuario FROM usuarios WHERE usuario = ?";
 
     try (Connection con = new Conexion().conectar();
          PreparedStatement pstmt = con.prepareStatement(sql)) {
@@ -39,6 +39,7 @@ public class LoginDAO {
         try (ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
                 return new Usuario(
+                    rs.getInt("id"),
                     rs.getString("nombre"),
                     rs.getString("apellido"),
                     rs.getString("grado"),

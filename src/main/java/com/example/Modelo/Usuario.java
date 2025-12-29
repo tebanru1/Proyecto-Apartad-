@@ -1,6 +1,7 @@
 package com.example.Modelo;
 
 public class Usuario {
+    private Integer id;
     private String cedula;
     private String nombre;
     private String apellido;   
@@ -21,7 +22,8 @@ public class Usuario {
         this.grado = grado;
         this.rol = rol;
     }
-    public Usuario(String nombre, String apellido, String grado, String rol,String usuario) {
+    public Usuario(Integer id,String nombre, String apellido, String grado, String rol,String usuario) {
+        this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.grado = grado;
@@ -69,6 +71,12 @@ public class Usuario {
     }
     public String getContrasena() {
         return contrasena;
+    }
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
     }
 
 }

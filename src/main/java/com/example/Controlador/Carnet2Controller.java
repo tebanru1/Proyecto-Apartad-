@@ -21,6 +21,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.pdf417.PDF417Writer;
 
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,6 +47,7 @@ import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.sql.Date;
+import java.awt.Desktop;
 
 
 public class Carnet2Controller implements Initializable, UsuarioReceptor {
@@ -64,6 +66,9 @@ public class Carnet2Controller implements Initializable, UsuarioReceptor {
     private Carnet carnetSeleccionado;
 
 
+    /**
+     * Inicializa el controlador y configura la vista de carnets.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         vincularCampos();
@@ -74,10 +79,12 @@ public class Carnet2Controller implements Initializable, UsuarioReceptor {
         ConfigurarEventosTabla();
         ConfigurarTextField();
         agregarListenersParaNuevaEntrada();
-        
         // NO usar usuario aquí, aún no ha sido pasado
     }
 
+    /**
+     * Vincula los campos de texto con los labels de la vista previa del carnet.
+     */
     private void vincularCampos() {
         txtNombres.textProperty().bind(TFnombre.textProperty());
         txtApellidos.textProperty().bind(TFapellido.textProperty());
@@ -99,17 +106,26 @@ public class Carnet2Controller implements Initializable, UsuarioReceptor {
         });
     }
 
+    /**
+     * Carga las opciones de RH en el ComboBox correspondiente.
+     */
     private void cargarRh() {
         CBrh.getItems().addAll("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-");
         CBrh.setPromptText("Seleccione RH");
     }
 
+    /**
+     * Configura los eventos de los botones principales de la vista de carnets.
+     */
     private void configurarBotones() {
         btnCrearCodigo.setOnAction(event -> generarCodigo());
         btnLimpiarFiltros.setOnAction(e->limpiarFiltros());
         btnNuevoCarnet.setOnAction(e->limpiarTextField());
     }
-private void configurarTabla() {
+    /**
+     * Configura las columnas y eventos de la tabla de carnets.
+     */
+    private void configurarTabla() {
         documento.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDocumento()));
         nombres.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNombre()));
         apellidos.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getApellido()));
@@ -127,6 +143,9 @@ private void configurarTabla() {
         FDPfechaGeneracion.setOnAction(e->CargarFiltro());
         FDPvigencia.setOnAction(e->CargarFiltro());
     }
+    /**
+     * Configura los eventos de selección de la tabla de carnets.
+     */
     private void ConfigurarEventosTabla() {
         tablaCarnet.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -136,6 +155,10 @@ private void configurarTabla() {
             }
         });
     }
+    /**
+     * Configura un TextField para aceptar solo mayúsculas y caracteres válidos.
+     * @param textField Campo de texto a configurar
+     */
     public void TextFieldMayusculas(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.equals(newValue.toUpperCase())) {
@@ -151,6 +174,9 @@ private void configurarTabla() {
             }
         });
     }
+    /**
+     * Configura los campos de texto para validaciones y formato.
+     */
     public void ConfigurarTextField() {
     TextFieldMayusculas(Fapellido);
     TextFieldMayusculas(Fnombre);
@@ -178,6 +204,9 @@ private void configurarTabla() {
         }
     });
 }
+    /**
+     * Limpia los campos de texto del formulario de carnet.
+     */
     private void limpiarTextField() {
         TFnombre.setText("");
         TFapellido.setText("");
@@ -188,6 +217,9 @@ private void configurarTabla() {
         DPvigencia.setValue(null);
         imagencodigo.setImage(null);
     }
+    /**
+     * Limpia la vista previa del carnet y desvincula los campos.
+     */
     @FXML
     private void limpiarCarnet(){
         txtNombres.textProperty().unbind();
@@ -207,6 +239,10 @@ private void configurarTabla() {
         carnetLimpiado = false;
         vincularCampos();
     }
+    /**
+     * Muestra los detalles del carnet seleccionado en la vista previa.
+     * @param carnet Carnet seleccionado
+     */
     private void mostrarDetallesCarnet(Carnet carnet) {
         carnetLimpiado = false;
         txtNombres.textProperty().unbind();
@@ -224,7 +260,11 @@ private void configurarTabla() {
         txtFechaVigencia.setText(carnet.getFechaVigencia().toString());
         mostrarImagenCodigo(carnet);
     }
-private boolean validarCarnetLimpio() {
+    /**
+     * Verifica si la vista previa del carnet contiene información.
+     * @return true si hay datos, false si está limpia
+     */
+    private boolean validarCarnetLimpio() {
     return !txtNombres.getText().trim().isEmpty()
         || !txtApellidos.getText().trim().isEmpty()
         || !txtEntidad.getText().trim().isEmpty()
@@ -236,7 +276,10 @@ private boolean validarCarnetLimpio() {
 
 private boolean carnetLimpiado = false; // para evitar limpiar varias veces
 
-private void agregarListenersParaNuevaEntrada() {
+    /**
+     * Agrega listeners para limpiar la vista previa al editar campos.
+     */
+    private void agregarListenersParaNuevaEntrada() {
     TextField[] campos = {TFnombre, TFapellido, TFdocumento, TFentidad, TFcargo};
 
     for (TextField tf : campos) {
@@ -264,6 +307,9 @@ private void agregarListenersParaNuevaEntrada() {
     });
 }
 
+    /**
+     * Genera el código PDF417 para el carnet y lo guarda en la base de datos.
+     */
     private void generarCodigo() {
         CarnetDAO CarnetDAO = new CarnetDAO();
         
@@ -306,6 +352,10 @@ private void agregarListenersParaNuevaEntrada() {
         }
     }
 
+    /**
+     * Muestra la imagen del código PDF417 en la vista previa.
+     * @param carnet Carnet con el código generado
+     */
     private void mostrarImagenCodigo(Carnet carnet) {
         try {
             byte[] imagenCodigo = carnet.getCodigo();
@@ -323,6 +373,11 @@ private void agregarListenersParaNuevaEntrada() {
         }
     }
 
+    /**
+     * Recorta la matriz del código de barras para eliminar espacios vacíos.
+     * @param matrix Matriz original
+     * @return Matriz recortada
+     */
     private BitMatrix recortarBitMatrix(BitMatrix matrix) {
         int[] recorte = matrix.getEnclosingRectangle();
         int width = recorte[2];
@@ -339,6 +394,11 @@ private void agregarListenersParaNuevaEntrada() {
         return recortada;
     }
 
+    /**
+     * Genera la imagen PNG del código PDF417 para el carnet.
+     * @param carnet Carnet a codificar
+     * @return Arreglo de bytes de la imagen
+     */
     private byte[] generarImagenCodigo(Carnet carnet) {
         try {
             String texto = carnet.generarTextoParaCodigo();
@@ -362,7 +422,10 @@ private void agregarListenersParaNuevaEntrada() {
     }
 
     
-private void cargarCarnetDB() {
+    /**
+     * Carga todos los carnets desde la base de datos.
+     */
+    private void cargarCarnetDB() {
         CarnetDAO carnetDAO = new CarnetDAO();
     try {
             listaCarnet.clear();
@@ -371,8 +434,11 @@ private void cargarCarnetDB() {
             System.out.println("Error al cargar autorizaciones: " + e.getMessage());
         }
     } 
-    @FXML
-public void exportarCarnet() {
+        /**
+         * Exporta la vista previa del carnet como imagen PNG.
+         */
+        @FXML
+        public void exportarCarnet() {
     // Crear selector de archivo
     FileChooser selectorArchivo = new FileChooser();
     selectorArchivo.setTitle("Guardar Carnet");
@@ -422,14 +488,22 @@ public void exportarCarnet() {
 
             // 6. Guardar la imagen combinada
             ImageIO.write(SwingFXUtils.fromFXImage(imagenCombinada, null), "png", archivo);
-            mostrarInformacion("Éxito", "El carnet (frente y reverso) se ha exportado correctamente en un solo archivo.");
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(archivo);
+                    }
+            mostrarInformacion("Éxito", "El carnet se ha exportado correctamente.");
 
         } catch (IOException ex) {
             mostrarAlerta("Error al guardar", ex.getMessage());
         }
     }
 }
-  private void mostrarAlerta(String titulo, String mensaje) {
+        /**
+         * Muestra una alerta de error con el mensaje proporcionado.
+         * @param titulo Título de la alerta
+         * @param mensaje Mensaje a mostrar
+         */
+        private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
@@ -437,6 +511,11 @@ public void exportarCarnet() {
         alert.showAndWait();
     }
     
+    /**
+     * Muestra una alerta informativa con el mensaje proporcionado.
+     * @param titulo Título de la alerta
+     * @param mensaje Mensaje a mostrar
+     */
     private void mostrarInformacion(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
@@ -444,6 +523,10 @@ public void exportarCarnet() {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+    /**
+     * Valida que todos los campos obligatorios del carnet estén completos.
+     * @return true si todos los campos son válidos
+     */
     private boolean ValidarCampos() {
         if (TFnombre.getText().isEmpty()){
             mostrarAlerta("Campo vacío","Nombres es obligatorio.");
@@ -476,6 +559,9 @@ public void exportarCarnet() {
         return true;
     }
 
+    /**
+     * Elimina el carnet seleccionado de la base de datos.
+     */
     @FXML
     private void eliminarCarnet() {
         Carnet carnetSeleccionado = tablaCarnet.getSelectionModel().getSelectedItem();
@@ -497,6 +583,9 @@ public void exportarCarnet() {
         }
     }
 
+    /**
+     * Aplica los filtros de búsqueda y actualiza la tabla de carnets.
+     */
     private void CargarFiltro(){
         try{ 
             CarnetDAO carnetDAO=new CarnetDAO();
@@ -513,7 +602,10 @@ public void exportarCarnet() {
             System.out.println("Error al cargar carnet: " + e.getMessage());
         }
     }
-private void limpiarFiltros(){
+    /**
+     * Limpia los filtros de búsqueda y recarga la tabla de carnets.
+     */
+    private void limpiarFiltros(){
     try{
     CarnetDAO carnetDAO=new CarnetDAO();
     Fnombre.setText("");
@@ -529,13 +621,19 @@ private void limpiarFiltros(){
         System.out.println(e.toString());
     }
 }
+    /**
+     * Recibe el usuario autenticado para operaciones relacionadas con el carnet.
+     */
     @Override
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
 
-@FXML
-public void editarCarnet() {
+    /**
+     * Llena los campos del formulario con los datos del carnet seleccionado para edición.
+     */
+    @FXML
+    public void editarCarnet() {
     if (carnetSeleccionado == null) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Sin selección");
@@ -558,7 +656,10 @@ public void editarCarnet() {
 
 
 }
-private void Actualizar(){
+    /**
+     * Actualiza los campos del formulario con los datos del carnet seleccionado.
+     */
+    private void Actualizar(){
     TFnombre.setText(carnetSeleccionado.getNombre());
     TFapellido.setText(carnetSeleccionado.getApellido());
     TFdocumento.setText(carnetSeleccionado.getDocumento());
@@ -568,8 +669,11 @@ private void Actualizar(){
     DPvigencia.setValue(carnetSeleccionado.getFechaVigencia());
 
 }
-@FXML
-public void actualizarCarnet() {
+    /**
+     * Actualiza el carnet seleccionado con los nuevos datos ingresados.
+     */
+    @FXML
+    public void actualizarCarnet() {
     if (carnetSeleccionado == null) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Sin selección");

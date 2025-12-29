@@ -8,18 +8,21 @@ import java.sql.SQLException;
 public class Conexion {
     Connection con;
 
-    public Connection conectar() {
-        try {
-            String url = "jdbc:mysql://localhost:3306/Apartado";
-            String user = "root";
-            String pass = "";
+public Connection conectar() {
+    try {
 
-            con = DriverManager.getConnection(url, user, pass);
-            return con;
+        String url = "jdbc:mysql://localhost:3306/Apartado?useUnicode=true&characterEncoding=UTF-8";
+        String user = "root";
+        String pass = "";
 
-        } catch (SQLException e) {
-            System.out.println("Error al conectar: " + e.getMessage());
-            return null;
-        }
+        con = DriverManager.getConnection(url, user, pass);
+        return con;
+
+    } catch (Exception e) {
+        System.out.println("Error al conectar: " + e.getMessage());
+        e.printStackTrace();
+        return null;
     }
+}
+
 }

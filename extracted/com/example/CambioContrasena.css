@@ -1,0 +1,79 @@
+/* Configuración General */
+.root-pane {
+    -fx-background-color: #F3F4F6; /* Gris muy claro de fondo */
+}
+
+/* Estilo de la Tarjeta (Card) */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 20, 0, 0, 10);
+}
+
+/* Tipografía */
+.title {
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1F2937; /* Gris oscuro */
+}
+
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+    -fx-font-size: 13px;
+}
+
+/* Inputs (PasswordFields) */
+.password-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+}
+
+.password-field:focused {
+    -fx-border-color: #3B82F6; /* Azul moderno */
+    -fx-border-width: 2px;
+}
+
+/* Estilo para error visual */
+.field-error {
+    -fx-border-color: #EF4444 !important;
+}
+
+/* Botón Principal */
+.button-primary {
+    -fx-background-color: #2563EB;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12px;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.button-primary:hover {
+    -fx-background-color: #1D4ED8;
+}
+
+/* Botón Secundario */
+.button-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6B7280;
+    -fx-font-weight: bold;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+.button-secondary:hover {
+    -fx-text-fill: #1F2937;
+    -fx-underline: true;
+}
+
+/* Mensajes de estado */
+.status-label {
+    -fx-text-fill: #EF4444; /* Rojo para error */
+    -fx-font-size: 12px;
+}

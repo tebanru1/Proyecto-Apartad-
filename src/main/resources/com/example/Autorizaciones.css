@@ -184,9 +184,13 @@
 }
 
 .primary-button {
-    -fx-background-color: #2196f3; /* Azul INPEC */
+    -fx-background-color: #0072CE;
     -fx-text-fill: white;
-    -fx-border-color: #2196f3;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
 }
 
 .secondary-button {
@@ -196,17 +200,23 @@
 }
 
 .danger-button {
-    -fx-background-color: #f44336; /* Rojo */
+    -fx-background-color: #f44336;
     -fx-text-fill: white;
-    -fx-border-color: #f44336;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
 }
 
 .submit-button {
-    -fx-background-color: #4caf50; /* Verde Principal */
+    -fx-background-color: #0072CE;
     -fx-text-fill: white;
-    -fx-border-color: #4caf50;
-    -fx-font-size: 15px;
-    -fx-padding: 10px 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
 }
 
 /* ===================================================================

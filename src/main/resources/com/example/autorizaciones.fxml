@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -8,6 +10,8 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -76,39 +80,125 @@
                <Label styleClass="sidebar-title" text="Crear / Editar Autorización" />
                
                <TextField fx:id="txtDescripcion" promptText="Descripción" styleClass="text-input" />
-               <ComboBox fx:id="AREA" prefWidth="1.7976931348623157E308" promptText="Área" styleClass="combo-box-input" />
-               <ComboBox fx:id="TIPO" prefWidth="1.7976931348623157E308" promptText="Tipo" styleClass="combo-box-input" />
-               <DatePicker fx:id="fechainicio" prefWidth="1.7976931348623157E308" promptText="Fecha de Inicio" styleClass="date-picker-input" />
-               <DatePicker fx:id="fechaterminacion" prefWidth="1.7976931348623157E308" promptText="Fecha de Terminación" styleClass="date-picker-input" />
+               <ComboBox fx:id="AREA" prefWidth="1.7976931348623157E308" promptText="Área" styleClass="combo-box-input">
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor></ComboBox>
+               <ComboBox fx:id="TIPO" prefWidth="1.7976931348623157E308" promptText="Tipo" styleClass="combo-box-input">
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor></ComboBox>
+               <DatePicker fx:id="fechainicio" prefWidth="1.7976931348623157E308" promptText="Fecha de Inicio" styleClass="date-picker-input">
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor></DatePicker>
+               <DatePicker fx:id="fechaterminacion" prefWidth="1.7976931348623157E308" promptText="Fecha de Terminación" styleClass="date-picker-input">
+                  <cursor>
+                     <Cursor fx:constant="HAND" />
+                  </cursor></DatePicker>
                
                <VBox spacing="10.0" styleClass="file-upload-box">
                    <Label styleClass="file-label" text="Documento Anexo" />
                    <HBox alignment="CENTER_LEFT" spacing="5.0">
                        <TextField fx:id="archivonombre" editable="false" promptText="Nombre del Archivo..." styleClass="text-input-file" HBox.hgrow="ALWAYS" />
-                       <Button fx:id="btncargarArchivo" styleClass="flat-button, primary-button" text="Cargar" />
+                       <Button fx:id="btncargarArchivo" minHeight="40.0" minWidth="143.0" styleClass="flat-button, primary-button" text="CARGAR" />
                    </HBox>
                    <HBox alignment="CENTER" spacing="10.0">
                      
-                     <Button fx:id="btnSubirBD" minWidth="79.0" styleClass="flat-button, submit-button" text="Subir" />
-                       <Button fx:id="btnEliminarArchivo" minHeight="41.0" styleClass="flat-button, danger-button" text="Eliminar" />
+                     <Button fx:id="btnSubirBD" minHeight="40.0" minWidth="143.0" styleClass="flat-button, submit-button" text="SUBIR" />
+                       <Button fx:id="btnEliminarArchivo" minHeight="40.0" minWidth="143.0" styleClass="flat-button, danger-button" text="ELIMINAR" />
                    </HBox>
                </VBox>
-               
-               <Label styleClass="sidebar-title" text="Filtros Rápidos" VBox.vgrow="ALWAYS" />
-               
-               <ComboBox fx:id="filtrar" prefWidth="1.7976931348623157E308" promptText="Filtrar por Área" styleClass="combo-box-input" />
-               <ComboBox fx:id="filtroTipo" prefWidth="1.7976931348623157E308" promptText="Filtrar por Tipo" styleClass="combo-box-input" />
-               <DatePicker fx:id="filtroFecha" prefWidth="1.7976931348623157E308" promptText="Filtrar por Fecha" styleClass="date-picker-input" />
 
             </VBox>
             
             <VBox alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-               
-               <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="search-bar">
-                  <Label styleClass="search-icon-placeholder" text="🔍" />
-                  <TextField fx:id="txtGlobalSearch" promptText="Buscar en todas las autorizaciones..." styleClass="search-input" HBox.hgrow="ALWAYS" />
-               </HBox>
-               <Button fx:id="btnAutorizacionIngresada" mnemonicParsing="false" onAction="#ActualizarEstado" text="AUTORIZACION INGRESADA" />
+               <VBox spacing="10.0">
+                  <children>
+                     <HBox alignment="CENTER">
+                        <children>
+                           <VBox alignment="BOTTOM_LEFT" HBox.hgrow="ALWAYS">
+                              <children>
+                                 
+                                 <Label styleClass="sidebar-title" text="Filtros Avanzados" VBox.vgrow="ALWAYS" />
+                              </children>
+                           </VBox>
+                           <VBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                              <children>
+                                 <Button fx:id="btnLimpiar" mnemonicParsing="false" text="LIMPIAR FILTRO">
+                                    <styleClass>
+                                       <String fx:value="primary-button" />
+                                       <String fx:value="flat-button" />
+                                    </styleClass>
+                                    <graphic>
+                                       <ImageView fitHeight="28.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                             <Image url="@claro.png" />
+                                          </image>
+                                       </ImageView>
+                                    </graphic>
+                                 </Button>
+                              </children>
+                           </VBox>
+                        </children>
+                     </HBox>
+                     
+                     <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="search-bar">
+                        <Label styleClass="search-icon-placeholder" text="🔍" />
+                        <VBox HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="DESCRIPCIÓN">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="Descripcion" promptText="FILTRAR POR DESCRIPCIÓN" styleClass="search-input" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label text="AREA" />
+                              <ComboBox fx:id="Area" minHeight="36.0" prefWidth="150.0" promptText="FILTRAR POR AREA">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ComboBox>
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label text="TIPO" />
+                              <ComboBox fx:id="Tipo" minHeight="36.0" prefWidth="150.0" promptText="FILTRAR POR TIPO">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></ComboBox>
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label text="FECHA INICIO" />
+                              <DatePicker fx:id="FechaIni" promptText="FECHA INICIO ">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></DatePicker>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="549.0" layoutY="16.0">
+                           <children>
+                              <Label text="FECHA FIN" />
+                              <DatePicker fx:id="FechaFin" promptText="FECHA FINALIZACIÓN">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></DatePicker>
+                           </children>
+                        </VBox>
+                     </HBox>
+                  </children>
+               </VBox>
+               <Button fx:id="btnAutorizacionIngresada" mnemonicParsing="false" onAction="#ActualizarEstado" text="AUTORIZACION INGRESADA">
+                  <styleClass>
+                     <String fx:value="primary-button" />
+                     <String fx:value="flat-button" />
+                  </styleClass></Button>
                
                <TableView fx:id="tablaAutorizaciones" styleClass="custom-table" VBox.vgrow="ALWAYS">
                   <columns>

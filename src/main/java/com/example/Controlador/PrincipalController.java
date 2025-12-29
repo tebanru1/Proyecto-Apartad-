@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 public class PrincipalController implements Initializable {
 
     @FXML
-    private Button btnIngreso, btnSalida, btnInicio, btnCodigo, btnAutorizaciones, btnVisitas, btnRegistrar, btnIngroAdmin;
+    private Button btnIngreso, btnSalida, btnInicio, btnCodigo, btnAutorizaciones, btnVisitas, btnRegistrar, btnIngroAdmin,btnCambiarContraseña,btnCerrarSesion;
 
     @FXML
     private TextField TFCedula;
@@ -42,7 +42,7 @@ public class PrincipalController implements Initializable {
      */
     private void configurarEventos() {
         btnRegistrar.setOnAction(event -> abrirVentanaRegistro());
-
+        btnCambiarContraseña.setOnAction(e->CambiarContraseña());
         btnCodigo.setOnAction(event -> cargarModulo("/com/example/CARNET2.fxml", c -> pasarUsuario(c)));
         btnAutorizaciones.setOnAction(event -> cargarModulo("/com/example/autorizaciones.fxml", c -> pasarUsuario(c)));
         btnVisitas.setOnAction(event -> cargarModulo("/com/example/visitante.fxml", c -> pasarUsuario(c)));
@@ -50,6 +50,32 @@ public class PrincipalController implements Initializable {
         btnInicio.setOnAction(event -> cargarModulo("/com/example/inicio.fxml", c -> pasarUsuario(c)));
 
     }
+
+@FXML
+private void cerrarSesion() {
+    try {
+        // 1. Limpiar usuario
+        usuario = null;
+
+        // 2. Cargar login.fxml
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/example/login.fxml")
+        );
+        Parent loginRoot = loader.load();
+
+        // 3. Obtener el Stage actual
+        Stage stage = (Stage) root.getScene().getWindow();
+        
+        // 4. Cambiar la escena
+        stage.setScene(new Scene(loginRoot));
+        stage.centerOnScreen();
+        stage.setResizable(false);
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
 
     /**
      * Método genérico para cargar un módulo en el AnchorPane root
@@ -94,6 +120,27 @@ public class PrincipalController implements Initializable {
         AnchorPane.setRightAnchor(nodo, 0.0);
     }
 
+        private void CambiarContraseña() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/CambiarContrasena.fxml"));
+            Parent registroRoot = loader.load();
+
+            Object controller = loader.getController();
+            pasarUsuario(controller);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(registroRoot));
+            stage.setResizable(false);
+            stage.centerOnScreen();
+            stage.setTitle("CAMBIAR CONTRASEÑA");
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/com/example/Logo_Institucional.png")));
+            stage.show();
+
+        } catch (IOException e) {
+            mostrarMensaje("Error al abrir ventana de registro: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+    }
     /**
      * Abre la ventana de registrar usuarios de forma independiente
      */

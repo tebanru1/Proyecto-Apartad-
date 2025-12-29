@@ -1,0 +1,102 @@
+
+.root {
+    -color-institucional-azul: #1E3A8A;
+    -color-institucional-gris: #ECEFF1;
+    -color-institucional-blanco: #FFFFFF;
+    -color-gris-oscuro: #607D8B;
+    -color-verde-hover: #2563EB;
+    -color-limpiar: #E57373;
+}
+
+.background-pane {
+    -fx-background-color: -color-institucional-blanco;
+}
+
+.form-title {
+    -fx-text-fill: -color-gris-oscuro;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10px 0;
+}
+
+.form-container {
+    -fx-background-color: -color-institucional-gris;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.0, 0, 3);
+    -fx-max-width: 800px;
+}
+
+.form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-gris-oscuro;
+}
+
+.text-input, .combo-box {
+    -fx-background-color: -color-institucional-blanco;
+    -fx-border-color: #CFD8DC;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 10px;
+    -fx-font-size: 14px;
+}
+
+.combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cfd8dc;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 4 8;
+    -fx-font-family: "Segoe UI", Roboto, sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-gris-oscuro;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0.1, 0, 1);
+}
+
+.combo-box:focused {
+    -fx-border-color: #1f3c88;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(31,60,136,0.3), 6, 0.2, 0, 2);
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 6 0 0;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #1f3c88;
+}
+
+.action-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-institucional-blanco;
+    -fx-padding: 10px 25px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.0, 0, 2);
+}
+
+.register-button {
+    -fx-background-color: -color-institucional-azul;
+}
+
+.register-button:hover {
+    -fx-background-color: -color-verde-hover;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.clear-button {
+    -fx-background-color: -color-limpiar;
+}
+
+.clear-button:hover {
+    -fx-background-color: #D32F2F;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}

@@ -354,5 +354,100 @@ public List<ingresoAdministrativos> FiltrarAvanzado(LocalDate fecha, String docu
     return lista;
 }
 
+public List<ingresoAdministrativos> listarPorFecha(LocalDate fecha) throws Exception {
+    String sql = """
+        SELECT r.id AS registroId, r.administrativo_id, a.cedula, a.nombre, a.apellido, a.cargo, a.fotoFuncionario,
+               r.fecha, r.horaIngreso, r.horaSalida, r.huellaIngreso, r.huellaSalida, r.usuario
+        FROM RegistrosAsistencia r
+        INNER JOIN Administrativos a ON r.administrativo_id = a.id
+        WHERE r.fecha = ?
+        ORDER BY r.horaIngreso DESC
+    """;
+
+    List<ingresoAdministrativos> lista = new ArrayList<>();
+
+    try (Connection con = cn.conectar();
+         PreparedStatement pst = con.prepareStatement(sql)) {
+
+        pst.setDate(1, Date.valueOf(fecha));
+
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                lista.add(mapearIngreso(rs));
+            }
+        }
+    }
+    return lista;
+}
+
+public List<ingresoAdministrativos> listarPorCedula(String cedula) throws Exception {
+    String sql = """
+        SELECT r.id AS registroId, r.administrativo_id, a.cedula, a.nombre, a.apellido, a.cargo, a.fotoFuncionario,
+               r.fecha, r.horaIngreso, r.horaSalida, r.huellaIngreso, r.huellaSalida, r.usuario
+        FROM RegistrosAsistencia r
+        INNER JOIN Administrativos a ON r.administrativo_id = a.id
+        WHERE a.cedula LIKE ?
+        ORDER BY r.fecha DESC
+    """;
+
+    List<ingresoAdministrativos> lista = new ArrayList<>();
+
+    try (Connection con = cn.conectar();
+         PreparedStatement pst = con.prepareStatement(sql)) {
+
+        pst.setString(1, "%" + cedula + "%");
+
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                lista.add(mapearIngreso(rs));
+            }
+        }
+    }
+    return lista;
+}
+
+public List<ingresoAdministrativos> listarPorNombre(String nombre) throws Exception {
+    String sql = """
+        SELECT r.id AS registroId, r.administrativo_id, a.cedula, a.nombre, a.apellido, a.cargo, a.fotoFuncionario,
+               r.fecha, r.horaIngreso, r.horaSalida, r.huellaIngreso, r.huellaSalida, r.usuario
+        FROM RegistrosAsistencia r
+        INNER JOIN Administrativos a ON r.administrativo_id = a.id
+        WHERE LOWER(a.nombre) LIKE ?
+        ORDER BY r.fecha DESC
+    """;
+
+    List<ingresoAdministrativos> lista = new ArrayList<>();
+
+    try (Connection con = cn.conectar();
+         PreparedStatement pst = con.prepareStatement(sql)) {
+
+        pst.setString(1, "%" + nombre.toLowerCase() + "%");
+
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                lista.add(mapearIngreso(rs));
+            }
+        }
+    }
+    return lista;
+}
+
+private ingresoAdministrativos mapearIngreso(ResultSet rs) throws SQLException {
+    return new ingresoAdministrativos(
+        rs.getString("cedula"),
+        rs.getString("nombre"),
+        rs.getString("apellido"),
+        rs.getString("cargo"),
+        rs.getDate("fecha"),
+        rs.getTime("horaIngreso"),
+        rs.getTime("horaSalida"),
+        rs.getBytes("huellaIngreso"),
+        rs.getBytes("huellaSalida"),
+        rs.getBytes("fotoFuncionario"),
+        rs.getString("usuario")
+    );
+}
+
+
 }
 

@@ -142,9 +142,26 @@ public void ConfigurarComboBox() {
     AREA.setPromptText("SELECCIONE ÁREA");
     ROL.setPromptText("SELECCIONE ROL");
 }
+
+public void TextFieldMayusculas(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.equals(newValue.toUpperCase())) {
+                textField.setText(newValue.toUpperCase());
+            }
+            if(textField.getText().length()>50){
+                String s = textField.getText().substring(0, 50);
+                textField.setText(s);
+            }
+            if(!newValue.matches("[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]*")){
+                textField.setText(newValue.replaceAll("[^a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]", ""));
+
+            }
+        });
+    }
+
 public void ConfigurarTextField() {
-    // Configurar TextField para aceptar solo números en txtcedula
-    
+    TextFieldMayusculas(txtapellido);
+    TextFieldMayusculas(txtnombre);
     txtcedula.textProperty().addListener((observable, oldValue, newValue) -> {
         if (!newValue.matches("\\d*")) {
             txtcedula.setText(newValue.replaceAll("[^\\d]", ""));
@@ -152,7 +169,8 @@ public void ConfigurarTextField() {
         if (txtcedula.getText().length() > 10) {
             String s = txtcedula.getText().substring(0, 10);
             txtcedula.setText(s);
-        }
+        } 
+
     });
     
 }

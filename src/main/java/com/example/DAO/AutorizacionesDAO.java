@@ -49,7 +49,16 @@ public class AutorizacionesDAO {
 
     // Listar todas las autorizaciones
     public List<Autorizaciones> listarTodas() throws Exception {
-        String sql = "SELECT * FROM Autorizaciones";
+        String sql = """
+                        SELECT id, descripcion, area, tipo,
+                        fechaInicio, fechaTerminacion, fechaGeneracion, PDFs,
+                        CASE
+                            WHEN estado IS NULL AND fechaTerminacion < CURRENT_DATE THEN 'VENCIDA'
+                            WHEN estado IS NULL AND fechaTerminacion >= CURRENT_DATE THEN 'PENDIENTE'
+                            ELSE estado
+                        END AS estado_calculado
+                    FROM Autorizaciones
+                    """;
         List<Autorizaciones> lista = new ArrayList<>();
         try (Connection con = conexion.conectar();
              PreparedStatement pst = con.prepareStatement(sql);
@@ -64,7 +73,7 @@ public class AutorizacionesDAO {
                         rs.getDate("fechaTerminacion"),
                         rs.getString("fechaGeneracion"),
                         rs.getBytes("PDFs"),
-                        rs.getString("estado")
+                        rs.getString("estado_calculado")
                 );
                 lista.add(a);
             }
@@ -73,15 +82,45 @@ public class AutorizacionesDAO {
     }
 
     // Filtrar por área (si area == "TODAS" devuelve todas)
-    public List<Autorizaciones> filtrarPorArea(String area) throws Exception {
-        if (area == null || area.isBlank() || area.equalsIgnoreCase("TODAS")) {
-            return listarTodas();
-        }
-        String sql = "SELECT * FROM Autorizaciones WHERE area = ?";
+    public List<Autorizaciones> filtrar(String descripcion,String area,String tipo,Date fechainicio,Date fechafin) throws Exception {
+       StringBuilder sql = new StringBuilder(
+        "SELECT id, descripcion, area, tipo, fechaInicio, fechaTerminacion, fechaGeneracion, PDFs, " +
+        "CASE " +
+        " WHEN estado IS NULL AND fechaTerminacion < CURRENT_DATE THEN 'VENCIDA' " +
+        " WHEN estado IS NULL AND fechaTerminacion >= CURRENT_DATE THEN 'PENDIENTE' " +
+        " ELSE estado " +
+        "END AS estado_calculado " +
+        "FROM Autorizaciones WHERE 1=1"
+    );
         List<Autorizaciones> lista = new ArrayList<>();
+       List<Object> parametros = new ArrayList<>();
+         if (descripcion != null && !descripcion.isEmpty()) {
+              sql.append(" AND descripcion LIKE ?");
+              parametros.add("%" + descripcion + "%");
+            }
+        if(area != null && !area.isEmpty()) {
+            sql.append(" AND area = ?");
+            parametros.add(area);
+        }
+        if(tipo != null && !tipo.isEmpty()) {
+            sql.append(" AND tipo = ?");
+            parametros.add(tipo);
+        }
+        if(fechainicio != null) {
+            sql.append(" AND fechaInicio = ?");
+            parametros.add(fechainicio);
+        }
+        if(fechafin != null) {
+            sql.append(" AND fechaTerminacion = ?");
+            parametros.add(fechafin);
+        }
+        
         try (Connection con = conexion.conectar();
-             PreparedStatement pst = con.prepareStatement(sql)) {
-            pst.setString(1, area);
+             PreparedStatement pst = con.prepareStatement(sql.toString())) {
+            
+            for (int i = 0; i < parametros.size(); i++) {
+            pst.setObject(i + 1, parametros.get(i));}
+            
             try (ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
                     Autorizaciones a = new Autorizaciones(
@@ -93,7 +132,7 @@ public class AutorizacionesDAO {
                             rs.getDate("fechaTerminacion"),
                             rs.getString("fechaGeneracion"),
                             rs.getBytes("PDFs"),
-                            rs.getString("estado")
+                            rs.getString("estado_calculado")
                     );
                     lista.add(a);
                 }
@@ -148,6 +187,21 @@ public class AutorizacionesDAO {
   public int AutorizacionesRecibidas() throws Exception {
     int total = 0;
     String sql = "SELECT COUNT(*) FROM Autorizaciones WHERE estado= 'INGRESADA'";
+
+    try (Connection con = conexion.conectar();
+         PreparedStatement pstmt = con.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+        if (rs.next()) {
+            total = rs.getInt(1);
+        }
+    }
+
+    return total;
+}
+  public int AutorizacionesPendientes() throws Exception {
+    int total = 0;
+    String sql = "SELECT COUNT(*) FROM Autorizaciones WHERE fechaTerminacion >= CURRENT_DATE AND estado IS NULL";
 
     try (Connection con = conexion.conectar();
          PreparedStatement pstmt = con.prepareStatement(sql);

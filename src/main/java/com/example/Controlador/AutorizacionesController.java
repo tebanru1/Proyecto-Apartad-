@@ -12,17 +12,19 @@ import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.awt.Desktop;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class AutorizacionesController implements Initializable {
-    @FXML Label lbIngresadas,lblTotalAutorizaciones,lblVencidas;
+    @FXML Label lbIngresadas,lblTotalAutorizaciones,lblVencidas,lblPendientes;
     @FXML
-    private TextField txtDescripcion;
+    private TextField txtDescripcion,Descripcion;
     @FXML
     private TextField archivonombre;
     @FXML
@@ -30,9 +32,9 @@ public class AutorizacionesController implements Initializable {
     @FXML
     private ComboBox<String> TIPO;
     @FXML
-    private ComboBox<String> filtrar; 
+    private ComboBox<String> Area,Tipo; 
     @FXML
-    private Button btnSubirBD,btnEliminarArchivo,btnDescargarArchivo,btncargarArchivo,btnAutorizacionIngresada; 
+    private Button btnSubirBD,btnEliminarArchivo,btnDescargarArchivo,btncargarArchivo,btnAutorizacionIngresada,btnLimpiar; 
     @FXML
     private TableView<Autorizaciones> tablaAutorizaciones;
     @FXML
@@ -50,9 +52,8 @@ public class AutorizacionesController implements Initializable {
     @FXML
     private TableColumn<Autorizaciones, String> columnaFechaGeneracion,columnaEstado;
     @FXML
-    private DatePicker fechainicio;
-    @FXML
-    private DatePicker fechaterminacion;
+    private DatePicker fechainicio,fechaterminacion,FechaIni,FechaFin;
+ 
 
     private AutorizacionesDAO autorizacionesDAO;
     private ObservableList<Autorizaciones> listaAutorizaciones;
@@ -61,6 +62,9 @@ public class AutorizacionesController implements Initializable {
     // <<--- Variable para almacenar el PDF seleccionado
     private File PDF;
 
+    /**
+     * Inicializa el controlador y configura la vista de autorizaciones.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         autorizacionesDAO = new AutorizacionesDAO();
@@ -69,21 +73,38 @@ public class AutorizacionesController implements Initializable {
         configurarTablaAutorizaciones();
         configurarEventoTabla();
         cargarAutorizacionesDesdeBaseDeDatos();
+        DashboardAutorizaciones();
+        ConfigurarTextField();
+    }
+    /**
+     * Interfaz para recibir el usuario en controladores.
+     */
+    public interface UsuarioReceptor {
+        void setUsuario(Usuario usuario);
+    }
+    /**
+     * Actualiza los contadores del dashboard de autorizaciones.
+     */
+    private void DashboardAutorizaciones(){
         AutorizacionesIngresadas();
         AutorizacionesVencidas();
         AutorizacionesRecibidas();
-    }
-        public interface UsuarioReceptor {
-            void setUsuario(Usuario usuario);
-        }
-
+        AutorizacionesPendientes();
+}
+    /**
+     * Configura los eventos de los botones y combos principales.
+     */
     private void configurarEventos() {
         btncargarArchivo.setOnAction(event -> cargarArchivo((Stage) btncargarArchivo.getScene().getWindow()));
         btnSubirBD.setOnAction(event -> subir());
-        filtrar.setOnAction(event -> filtrarAutorizaciones());
+        Area.setOnAction(event -> filtrarAutorizaciones());
         btnEliminarArchivo.setOnAction(event -> EliminarAutorizacion());
+        btnLimpiar.setOnAction(event -> limpiarFiltros());
     }
-private void configurarEventoTabla() {
+    /**
+     * Configura los eventos de la tabla de autorizaciones (selección y doble clic).
+     */
+    private void configurarEventoTabla() {
     tablaAutorizaciones.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
         if (newSelection != null) {
             txtDescripcion.setText(newSelection.getDescripcion());
@@ -107,7 +128,12 @@ private void configurarEventoTabla() {
     });
 }
 
-private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
+    /**
+     * Abre el PDF asociado a una autorización desde la base de datos.
+     * @param idAutorizacion ID de la autorización
+     * @param descripcion Descripción para el nombre del archivo
+     */
+    private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
     try {
         byte[] pdfBytes = autorizacionesDAO.obtenerPDFPorId(idAutorizacion);
         if (pdfBytes == null || pdfBytes.length == 0) {
@@ -134,19 +160,28 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
 }
 
 
+    /**
+     * Configura los ComboBox de área y tipo para la vista y filtros.
+     */
     private void ConfigurarComboBox() {
         AREA.getItems().addAll("ATENCIÓN Y TRATAMIENTO", "COMANDO DE VIGILANCIA", "DIRECCIÓN", "DOMICILIARIA",
                 "EXPENDIO", "JURIDICA", "PAGADURIA", "PABELLONES", "POLICIA JUDICIAL", "RANCHO",
                 "RESEÑA", "SANIDAD", "OTRO");
         TIPO.getItems().addAll("OCASIONAL", "PERIODICO", "PERMANENTE");
-        AREA.setPromptText("SELECCIONE ÁREA");
-        TIPO.setPromptText("SELECCIONE TIPO");
-        filtrar.setPromptText("SELECCIONE FILTRO");
-        filtrar.getItems().addAll("TODAS","ATENCIÓN Y TRATAMIENTO", "COMANDO DE VIGILANCIA", "DIRECCIÓN", "DOMICILIARIA",
+        Area.getItems().addAll("ATENCIÓN Y TRATAMIENTO", "COMANDO DE VIGILANCIA", "DIRECCIÓN", "DOMICILIARIA",
                 "EXPENDIO", "JURIDICA", "PAGADURIA", "PABELLONES", "POLICIA JUDICIAL", "RANCHO",
                 "RESEÑA", "SANIDAD");
+        Tipo.getItems().addAll("OCASIONAL", "PERIODICO", "PERMANENTE");
+        AREA.setPromptText("SELECCIONE ÁREA");
+        Tipo.setPromptText("FILTRAR POR TIPO");
+        TIPO.setPromptText("SELECCIONE TIPO");
+        Area.setPromptText("FILTRAR POR ÁREA");
     }
 
+    /**
+     * Permite seleccionar un archivo PDF desde el sistema de archivos.
+     * @param stage Ventana principal
+     */
     private void cargarArchivo(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Archivo PDF");
@@ -161,6 +196,38 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
         }
     }
 
+    /**
+     * Configura un TextField para aceptar solo mayúsculas y caracteres válidos.
+     * @param textField Campo de texto a configurar
+     */
+    public void TextFieldMayusculas(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.equals(newValue.toUpperCase())) {
+                textField.setText(newValue.toUpperCase());
+            }
+            if(textField.getText().length()>50){
+                String s = textField.getText().substring(0, 50);
+                textField.setText(s);
+            }
+            if(!newValue.matches("[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]*")){
+                textField.setText(newValue.replaceAll("[^a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]", ""));
+
+            }
+        });
+    }
+    /**
+     * Configura los campos de texto para validaciones y formato.
+     */
+    public void ConfigurarTextField() {
+    TextFieldMayusculas(Descripcion);
+    TextFieldMayusculas(txtDescripcion);
+    
+}
+
+    /**
+     * Muestra un mensaje informativo en una alerta.
+     * @param mensaje Mensaje a mostrar
+     */
     private void mostrarMensaje(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("AUTORIZACIONES");
@@ -169,6 +236,9 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
         alert.showAndWait();
     }
 
+    /**
+     * Limpia los campos del formulario de registro de autorizaciones.
+     */
     private void limpiarCampos() {
         txtDescripcion.clear();
         AREA.getSelectionModel().clearSelection();
@@ -178,7 +248,44 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
         archivonombre.clear();
         PDF = null;
     }
+        /**
+         * Limpia los filtros de búsqueda y recarga la tabla de autorizaciones.
+         */
+        private void limpiarFiltros() {
 
+    Descripcion.clear();
+
+    resetComboBox(Area, "FILTRAR POR ÁREA");
+    resetComboBox(Tipo, "FILTRAR POR TIPO");
+
+    FechaIni.setValue(null);
+    FechaFin.setValue(null);
+
+    Descripcion.requestFocus();
+}
+
+    /**
+     * Reinicia un ComboBox a su estado inicial con texto personalizado.
+     * @param combo ComboBox a reiniciar
+     * @param texto Texto a mostrar como prompt
+     */
+    private <T> void resetComboBox(ComboBox<T> combo, String texto) {
+    combo.setValue(null);
+    combo.getSelectionModel().clearSelection();
+
+    combo.setButtonCell(new ListCell<>() {
+        @Override
+        protected void updateItem(T item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(item == null || empty ? texto : item.toString());
+        }
+    });
+}
+
+
+    /**
+     * Configura las columnas y eventos de la tabla de autorizaciones.
+     */
     private void configurarTablaAutorizaciones() {
         id.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(String.valueOf(cellData.getValue().getId())));
@@ -198,9 +305,16 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
              new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEstado()));
                 listaAutorizaciones=FXCollections.observableArrayList();
                 tablaAutorizaciones.setItems(listaAutorizaciones);
-
+                Descripcion.setOnKeyReleased(event -> filtrarAutorizaciones());
+                Area.setOnAction(event -> filtrarAutorizaciones());
+                Tipo.setOnAction(event -> filtrarAutorizaciones());
+                FechaIni.setOnAction(event -> filtrarAutorizaciones());
+                FechaFin.setOnAction(event -> filtrarAutorizaciones());
     }
 
+    /**
+     * Sube una nueva autorización con PDF a la base de datos.
+     */
     private void subir() {
         try {
             int id = 0;
@@ -227,6 +341,8 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
                 listaAutorizaciones.add(autorizaciones);
                 mostrarMensaje("Archivo subido correctamente.");
                 limpiarCampos();
+                cargarAutorizacionesDesdeBaseDeDatos();
+                DashboardAutorizaciones();
             } else {
                 mostrarMensaje("Error al subir el archivo a la base de datos.");
             }
@@ -235,21 +351,28 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
         }
     }
 
+    /**
+     * Filtra la lista de autorizaciones según los criterios seleccionados.
+     */
     private void filtrarAutorizaciones() {
         try {
-            String areaSeleccionada = filtrar.getValue();
-            if (areaSeleccionada == null || areaSeleccionada.isEmpty()) {
-                mostrarMensaje("Por favor seleccione un área antes de filtrar.");
-                return;
-            }
-            listaAutorizaciones.clear();
-            listaAutorizaciones.addAll(autorizacionesDAO.filtrarPorArea(areaSeleccionada));
-            if (listaAutorizaciones.isEmpty()) mostrarMensaje("No se encontraron autorizaciones para el área seleccionada.");
-        } catch (Exception e) {
-            mostrarMensaje("Error al filtrar autorizaciones: " + e.getMessage());
+          AutorizacionesDAO dao = new AutorizacionesDAO();
+            String descr=Descripcion.getText().trim();
+            String areaSeleccionada = Area.getValue();
+            String tipoSeleccionado = Tipo.getValue();
+            Date fechaInicio = (FechaIni.getValue() != null) ? Date.valueOf(FechaIni.getValue()) : null;
+            Date fechaFin = (FechaFin.getValue() != null) ? Date.valueOf(FechaFin.getValue()) : null;
+
+            List<Autorizaciones> list = dao.filtrar(descr,areaSeleccionada, tipoSeleccionado, fechaInicio, fechaFin);
+            listaAutorizaciones.setAll(list);
+    }catch (Exception e) {
+            System.out.println("Error al filtrar autorizaciones: " + e.getMessage());
         }
     }
 
+    /**
+     * Elimina la autorización seleccionada de la base de datos.
+     */
     private void EliminarAutorizacion() {
         Autorizaciones autorizacionSeleccionada = tablaAutorizaciones.getSelectionModel().getSelectedItem();
         if (autorizacionSeleccionada == null) {
@@ -262,6 +385,7 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
                 listaAutorizaciones.remove(autorizacionSeleccionada);
                 mostrarMensaje("Autorización eliminada correctamente.");
                 limpiarCampos();
+                DashboardAutorizaciones();
             } else {
                 mostrarMensaje("Error al eliminar la autorización.");
             }
@@ -270,6 +394,9 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
         }
     }
 
+    /**
+     * Carga todas las autorizaciones desde la base de datos.
+     */
     private void cargarAutorizacionesDesdeBaseDeDatos() {
         try {
             listaAutorizaciones.clear();
@@ -278,6 +405,9 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
             System.out.println("Error al cargar autorizaciones: " + e.getMessage());
         }
     }  
+    /**
+     * Actualiza el contador de autorizaciones ingresadas.
+     */
     private void AutorizacionesIngresadas(){
         try {
             int total=autorizacionesDAO.AutorizacionesIngresadas();
@@ -286,7 +416,10 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
             System.out.println(e.toString());
         }
     } 
-       private void AutorizacionesVencidas(){
+    /**
+     * Actualiza el contador de autorizaciones vencidas.
+     */
+    private void AutorizacionesVencidas(){
         try {
             int total=autorizacionesDAO.AutorizacionesVencidas();
             lblVencidas.setText(String.valueOf(total));
@@ -294,7 +427,10 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
             System.out.println(e.toString());
         }
     }  
-     private void AutorizacionesRecibidas(){
+    /**
+     * Actualiza el contador de autorizaciones recibidas.
+     */
+    private void AutorizacionesRecibidas(){
         try {
             int total=autorizacionesDAO.AutorizacionesRecibidas();
             lbIngresadas.setText(String.valueOf(total));
@@ -302,12 +438,32 @@ private void abrirPDFDesdeDB(int idAutorizacion, String descripcion) {
             System.out.println(e.toString());
         }
     } 
-@FXML
-private void ActualizarEstado() {
+    /**
+     * Actualiza el contador de autorizaciones pendientes.
+     */
+    private void AutorizacionesPendientes(){
+        try {
+            int total=autorizacionesDAO.AutorizacionesPendientes();
+            lblPendientes.setText(String.valueOf(total));
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+    
+    /**
+     * Actualiza el estado de la autorización seleccionada a 'INGRESADA'.
+     */
+    @FXML
+    private void ActualizarEstado() {
 
     String nuevoEstado = "INGRESADA"; // Estado que deseas asignar
 
     boolean actualizado=autorizacionesDAO.actualizarEstadoAutorizacion(idSeleccionado, nuevoEstado);
-
+    if(idSeleccionado == 0){
+        mostrarMensaje("Seleccione una autorización para actualizar su estado.");
+        return;
+    }
+    DashboardAutorizaciones();
+    cargarAutorizacionesDesdeBaseDeDatos();
 }
 }

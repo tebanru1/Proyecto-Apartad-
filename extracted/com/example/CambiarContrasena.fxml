@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="500.0" prefWidth="700.0" styleClass="root-pane" stylesheets="@CambioContrasena.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.Controlador.CambiarContrasenaController">
+   <children>
+      <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="400.0" spacing="20.0" styleClass="card">
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+         </padding>
+         <children>
+            <VBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Label styleClass="title" text="Cambiar contraseña" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </VBox>
+
+            <VBox spacing="5.0">
+               <children>
+                  <Label styleClass="field-label" text="Contraseña actual" />
+                  <PasswordField fx:id="PFContrasenaActual" promptText="••••••••" styleClass="password-field" />
+               </children>
+            </VBox>
+
+            <VBox spacing="5.0">
+               <children>
+                  <Label styleClass="field-label" text="Nueva contraseña" />
+                  <PasswordField fx:id="PFContrasenaNueva" promptText="Mínimo 8 caracteres" styleClass="password-field" />
+               </children>
+            </VBox>
+
+            <VBox spacing="5.0">
+               <children>
+                  <Label styleClass="field-label" text="Confirmar nueva contraseña" />
+                  <PasswordField fx:id="PFConfirmarContrasena" promptText="Repite tu contraseña" styleClass="password-field" />
+               </children>
+            </VBox>
+
+            <Label fx:id="lblStatus" alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="status-label" text="Las contraseñas no coinciden" visible="false" />
+
+            <VBox spacing="12.0">
+               <children>
+                  <Button fx:id="btnActualizar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleUpdate" styleClass="button-primary" text="Actualizar contraseña" />
+                  <Button fx:id="btnCancel" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="button-secondary" text="Cancelar" />
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>

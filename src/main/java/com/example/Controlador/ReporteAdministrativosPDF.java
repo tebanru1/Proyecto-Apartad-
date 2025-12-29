@@ -13,10 +13,10 @@ import java.util.List;
 
 public class ReporteAdministrativosPDF {
 
-    public void generarPDF(List<ingresoAdministrativos> lista, File archivoSalida) throws Exception {
+    public void generarPDF(List<ingresoAdministrativos> lista, File archivo, TipoFiltro tipoFiltro,String valorFiltro) throws Exception {
 
         Document documento = new Document(PageSize.A4.rotate(), 20, 20, 10, 20);
-        PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(archivoSalida));
+        PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(archivo));
 
         HeaderFooterEvento event = new HeaderFooterEvento();
         writer.setPageEvent(event);
